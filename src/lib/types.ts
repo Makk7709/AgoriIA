@@ -1,20 +1,20 @@
 export interface Position {
   id: string
   theme_id: string
-  title: string
-  description: string | null
+  candidate_id: string
+  content: string
+  source_url: string | null
   created_at: string
-  candidate_positions?: {
-    candidate: {
-      id: string
-      name: string
-      party: string
-    }[]
-  }[]
+  candidate?: {
+    id: string
+    name: string
+    party: string
+  }
 }
 
-export interface PositionWithCandidate extends Position {
+export interface PositionWithCandidate extends Omit<Position, 'candidate'> {
   candidate: {
+    id: string
     name: string
     party: string
   }
@@ -31,6 +31,7 @@ export interface Candidate {
   id: string
   name: string
   party: string
+  bio: string | null
   created_at: string
 }
 

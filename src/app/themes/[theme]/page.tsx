@@ -27,7 +27,11 @@ export async function generateMetadata({ params }: ThemePageProps): Promise<Meta
 
   return {
     title: `${data.theme.name} - AgorIA`,
-    description: data.theme.description || `Découvrez les positions des candidats sur ${data.theme.name}`
+    description: data.theme.description || `Découvrez les positions des candidats sur ${data.theme.name}`,
+    viewport: {
+      width: 'device-width',
+      initialScale: 1
+    }
   }
 }
 

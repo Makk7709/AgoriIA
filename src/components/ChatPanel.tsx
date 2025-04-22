@@ -82,22 +82,22 @@ export function ChatPanel() {
   }
 
   return (
-    <div className="flex flex-col h-[800px] w-full max-w-5xl mx-auto bg-white/80 backdrop-blur-sm rounded-xl shadow-2xl border-2 border-[#002654]/10">
+    <div className="flex flex-col h-[800px] w-full max-w-5xl mx-auto bg-white/95 backdrop-blur-sm rounded-xl shadow-xl border border-[#002654]/10">
       {/* Header */}
-      <div className="flex items-center gap-3 p-6 border-b-2 border-[#002654]/10 bg-gradient-to-r from-[#002654] via-white to-[#EF4135] text-white rounded-t-xl">
+      <div className="flex items-center gap-3 p-6 border-b border-[#002654]/10 bg-gradient-to-r from-[#002654] via-[#002654]/90 to-[#EF4135] text-white rounded-t-xl">
         <Flag className="h-6 w-6" />
-        <h2 className="text-2xl font-serif font-bold drop-shadow-md">Assistant Citoyen</h2>
+        <h2 className="text-2xl font-serif font-bold">Assistant Citoyen</h2>
       </div>
 
       {/* Messages container */}
-      <div className="flex-1 overflow-y-auto p-8 space-y-8 bg-gradient-to-b from-white via-[#F4F6F8] to-white">
+      <div className="flex-1 overflow-y-auto p-8 space-y-8">
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full space-y-8">
             <div className="text-center space-y-4">
               <h2 className="text-3xl font-serif font-bold text-[#002654]">
                 Bienvenue sur AgorIA
               </h2>
-              <p className="text-[#002654]/80 max-w-2xl font-serif text-lg leading-relaxed">
+              <p className="text-[#002654]/90 max-w-2xl font-serif text-lg leading-relaxed">
                 Je suis votre assistant citoyen, au service de la démocratie. Je peux vous aider à comprendre les positions des candidats sur différents sujets.
               </p>
             </div>
@@ -110,7 +110,7 @@ export function ChatPanel() {
                   <Button
                     key={suggestion}
                     variant="outline"
-                    className="w-full text-left font-serif text-lg py-6 px-8 bg-white hover:bg-gradient-to-r hover:from-[#002654] hover:via-[#002654] hover:to-[#EF4135] text-[#002654] hover:text-white transition-all border-2 border-[#002654]/20 hover:border-transparent shadow-md hover:shadow-lg rounded-xl"
+                    className="w-full text-left font-serif text-lg py-6 px-8 bg-white hover:bg-gradient-to-r hover:from-[#002654] hover:to-[#EF4135] text-[#002654] hover:text-white transition-all duration-300 border border-[#002654]/20 hover:border-transparent rounded-xl"
                     onClick={() => handleSubmit(suggestion)}
                   >
                     {suggestion}
@@ -131,10 +131,10 @@ export function ChatPanel() {
           >
             <div
               className={cn(
-                "max-w-[85%] rounded-xl p-6 font-serif text-lg leading-relaxed",
+                "max-w-[85%] rounded-xl p-6 font-serif text-lg leading-relaxed transition-all duration-300",
                 message.role === 'user'
-                  ? 'bg-gradient-to-r from-[#002654] to-[#002654] text-white shadow-lg'
-                  : 'bg-white border-2 border-[#002654]/20 shadow-md'
+                  ? 'bg-gradient-to-r from-[#002654] to-[#002654]/90 text-white shadow-lg hover:shadow-xl'
+                  : 'bg-white/95 border border-[#002654]/20 shadow hover:shadow-lg'
               )}
             >
               {message.content}
@@ -143,7 +143,7 @@ export function ChatPanel() {
         ))}
         {isLoading && (
           <div className="flex justify-start">
-            <div className="bg-white border-2 border-[#002654]/20 rounded-xl p-6 shadow-md">
+            <div className="bg-white/95 border border-[#002654]/20 rounded-xl p-6 shadow">
               <div className="flex space-x-3">
                 <div className="w-3 h-3 bg-[#002654] rounded-full animate-bounce" />
                 <div className="w-3 h-3 bg-white border-2 border-[#002654] rounded-full animate-bounce delay-100" />
@@ -156,7 +156,7 @@ export function ChatPanel() {
       </div>
 
       {/* Input container */}
-      <div className="border-t-2 border-[#002654]/10 bg-white p-6 rounded-b-xl">
+      <div className="border-t border-[#002654]/10 bg-white/95 p-6 rounded-b-xl">
         <form
           onSubmit={(e) => {
             e.preventDefault()
@@ -168,7 +168,7 @@ export function ChatPanel() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Posez votre question sur les programmes..."
-            className="min-h-[60px] max-h-[200px] font-serif text-lg focus:border-[#002654] focus:ring-[#002654] resize-none rounded-xl"
+            className="min-h-[60px] max-h-[200px] font-serif text-lg focus:border-[#002654] focus:ring-[#002654] resize-none rounded-xl transition-all duration-300"
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault()
@@ -179,7 +179,7 @@ export function ChatPanel() {
           <Button 
             type="submit" 
             disabled={isLoading || !input.trim()}
-            className="bg-gradient-to-r from-[#002654] to-[#EF4135] hover:from-[#001b3b] hover:to-[#d93a2f] text-white px-8 rounded-xl shadow-md hover:shadow-lg transition-all"
+            className="bg-gradient-to-r from-[#002654] to-[#EF4135] hover:from-[#001b3b] hover:to-[#d93a2f] text-white px-8 rounded-xl shadow hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Send className="h-5 w-5" />
           </Button>

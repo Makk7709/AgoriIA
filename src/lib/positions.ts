@@ -1,15 +1,4 @@
-export interface Position {
-  id: string
-  theme_id: string
-  candidate_id: string
-  content: string
-  source_url: string | null
-  created_at: string
-  candidate: {
-    name: string
-    party: string
-  }
-}
+import type { Position } from './types'
 
 export function selectRepresentativePositions(positions: Position[]): Position[] {
   // Ensure we have at least 3 positions
@@ -23,7 +12,7 @@ export function selectRepresentativePositions(positions: Position[]): Position[]
   
   // Sort by content length (descending) to get more detailed positions first
   const sortedPositions = [...positions].sort(
-    (a, b) => b.content.length - a.content.length
+    (a, b) => (b.content?.length || 0) - (a.content?.length || 0)
   )
 
   // Get positions from different candidates
@@ -34,9 +23,10 @@ export function selectRepresentativePositions(positions: Position[]): Position[]
     if (selectedPositions.length >= 3) break
 
     // Only add position if we haven't used this candidate yet
-    if (!usedCandidates.has(position.candidate.name)) {
+    const candidateName = position.candidate_positions?.[0]?.candidate[0]?.name
+    if (candidateName && !usedCandidates.has(candidateName)) {
       selectedPositions.push(position)
-      usedCandidates.add(position.candidate.name)
+      usedCandidates.add(candidateName)
     }
   }
 

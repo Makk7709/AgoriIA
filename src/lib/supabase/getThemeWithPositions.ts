@@ -1,28 +1,5 @@
 import { supabase } from './config'
-
-interface Theme {
-  id: string
-  name: string
-  description: string | null
-  created_at: string
-}
-
-interface Position {
-  id: string
-  theme_id: string
-  title: string
-  description: string | null
-  content: string | null
-  source_url: string | null
-  created_at: string
-  candidate_positions?: {
-    candidate: {
-      id: string
-      name: string
-      party: string
-    }[]
-  }[]
-}
+import type { Theme, Position } from '@/lib/types'
 
 export async function getThemeWithPositions(themeId: string): Promise<{ theme: Theme, positions: Position[] } | null> {
   try {
@@ -38,23 +15,20 @@ export async function getThemeWithPositions(themeId: string): Promise<{ theme: T
       return null
     }
 
-    // Get positions with candidate info through the junction table
+    // Get positions with candidate info
     const { data: positions, error: positionsError } = await supabase
       .from('positions')
       .select(`
         id,
         theme_id,
-        title,
-        description,
+        candidate_id,
         content,
         source_url,
         created_at,
-        candidate_positions (
-          candidate:candidates (
-            id,
-            name,
-            party
-          )
+        candidate:candidates!inner (
+          id,
+          name,
+          party
         )
       `)
       .eq('theme_id', themeId)
@@ -64,9 +38,15 @@ export async function getThemeWithPositions(themeId: string): Promise<{ theme: T
       return null
     }
 
+    // Transform the data to match the Position interface
+    const transformedPositions = positions?.map(pos => ({
+      ...pos,
+      candidate: Array.isArray(pos.candidate) ? pos.candidate[0] : pos.candidate
+    })) || []
+
     return {
       theme,
-      positions: positions || []
+      positions: transformedPositions
     }
   } catch (error) {
     console.error('Unexpected error:', error)

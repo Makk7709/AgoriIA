@@ -66,18 +66,18 @@ type Props = {
 }
 
 export const metadata: Metadata = {
-  title: 'Comparer - AgorIA',
+  title: 'Comparer - Korev AI',
   description: 'Comparez les positions des candidats sur différents thèmes politiques et obtenez une analyse objective grâce à l\'IA.',
   openGraph: {
-    title: 'Comparer - AgorIA',
+    title: 'Comparer - Korev AI',
     description: 'Comparez les positions des candidats sur différents thèmes politiques et obtenez une analyse objective grâce à l\'IA.',
     type: 'website',
     locale: 'fr_FR',
-    siteName: 'AgorIA',
+    siteName: 'Korev AI',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Comparer - AgorIA',
+    title: 'Comparer - Korev AI',
     description: 'Comparez les positions des candidats sur différents thèmes politiques et obtenez une analyse objective grâce à l\'IA.',
   },
 };
@@ -111,35 +111,35 @@ export default async function ComparePage({ searchParams }: Props) {
     <>
       <StructuredData
         type="WebPage"
-        name="Comparer - AgorIA"
+        name="Comparer - Korev AI"
         description="Comparez les positions des candidats sur différents thèmes politiques et obtenez une analyse objective grâce à l'IA."
         url="https://agoria.app/compare"
         datePublished={new Date().toISOString()}
         dateModified={new Date().toISOString()}
       />
-      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+          <h1 className="text-4xl font-bold font-serif tracking-tight text-[#002654] sm:text-5xl">
             Comparer les positions
           </h1>
-          <p className="mt-3 max-w-2xl mx-auto text-xl text-gray-500 sm:mt-4">
+          <p className="mt-4 max-w-2xl mx-auto text-xl text-[#002654]/80 font-serif sm:mt-6">
             Sélectionnez un thème et des candidats pour comparer leurs positions
           </p>
         </div>
 
-        <form className="mt-8 space-y-6" action="/compare" method="GET">
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <form className="mt-12 space-y-8" action="/compare" method="GET">
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
             <div>
               <label
                 htmlFor="theme"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-lg font-serif font-medium text-[#002654]"
               >
                 Thème
               </label>
               <select
                 id="theme"
                 name="theme"
-                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                className="mt-2 block w-full px-4 py-3 text-base font-serif border-2 border-[#002654]/20 focus:outline-none focus:ring-[#002654] focus:border-[#002654] rounded-xl bg-white/80 text-[#002654]"
                 defaultValue={theme || ''}
               >
                 <option value="">Sélectionnez un thème</option>
@@ -154,7 +154,7 @@ export default async function ComparePage({ searchParams }: Props) {
             <div>
               <label
                 htmlFor="candidates"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-lg font-serif font-medium text-[#002654]"
               >
                 Candidats à comparer
               </label>
@@ -162,7 +162,7 @@ export default async function ComparePage({ searchParams }: Props) {
                 id="candidates"
                 name="candidates"
                 multiple
-                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                className="mt-2 block w-full px-4 py-3 text-base font-serif border-2 border-[#002654]/20 focus:outline-none focus:ring-[#002654] focus:border-[#002654] rounded-xl bg-white/80 text-[#002654]"
                 defaultValue={candidates?.split(',') || []}
               >
                 {allCandidates.map((candidate) => (
@@ -171,7 +171,7 @@ export default async function ComparePage({ searchParams }: Props) {
                   </option>
                 ))}
               </select>
-              <p className="mt-2 text-sm text-gray-500">
+              <p className="mt-3 text-base text-[#002654]/60 font-serif">
                 Maintenez Ctrl (Windows) ou Cmd (Mac) pour sélectionner plusieurs candidats
               </p>
             </div>
@@ -180,7 +180,7 @@ export default async function ComparePage({ searchParams }: Props) {
           <div className="flex justify-center">
             <button
               type="submit"
-              className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="inline-flex items-center px-8 py-4 text-lg font-medium font-serif rounded-xl shadow-md text-white bg-gradient-to-r from-[#002654] to-[#EF4135] hover:from-[#001b3b] hover:to-[#d93a2f] transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#002654]"
             >
               Comparer
             </button>
@@ -188,80 +188,62 @@ export default async function ComparePage({ searchParams }: Props) {
         </form>
 
         {analysisResults.length > 0 && (
-          <div className="mt-12">
-            <h2 className="text-2xl font-bold text-gray-900 mb-8">Résultats de la comparaison</h2>
+          <div className="mt-16">
+            <h2 className="text-3xl font-bold font-serif text-[#002654] mb-10 text-center">
+              Résultats de la comparaison
+            </h2>
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
               {analysisResults.map((result) => {
                 const candidate = allCandidates.find((c) => c.id === result.candidate_id)
                 return (
                   <div
                     key={result.id}
-                    className="bg-white shadow overflow-hidden sm:rounded-lg"
+                    className="bg-white/80 backdrop-blur-sm shadow-lg border-2 border-[#002654]/10 overflow-hidden rounded-xl transition-all hover:border-[#002654]/30"
                   >
-                    <div className="px-4 py-5 sm:px-6">
-                      <h3 className="text-lg leading-6 font-medium text-gray-900">
+                    <div className="px-8 py-6 border-b border-[#002654]/10">
+                      <h3 className="text-2xl font-serif font-semibold text-[#002654]">
                         {candidate?.name}
                       </h3>
-                      <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                      <p className="mt-2 text-lg text-[#002654]/70 font-serif">
                         {candidate?.party}
                       </p>
                     </div>
-                    <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
-                      <div className="prose max-w-none">
-                        <h4 className="text-base font-semibold text-gray-900">Position</h4>
-                        <p className="mt-2 text-gray-600">{result.content}</p>
-
+                    <div className="px-8 py-6">
+                      <div className="space-y-6">
+                        <div>
+                          <h4 className="text-lg font-serif font-medium text-[#002654]">Position</h4>
+                          <p className="mt-2 text-base text-[#002654]/80 font-serif">{result.content}</p>
+                        </div>
+                        <div>
+                          <h4 className="text-lg font-serif font-medium text-[#002654]">Analyse</h4>
+                          <p className="mt-2 text-base text-[#002654]/80 font-serif">{result.analysis.summary}</p>
+                          <ul className="mt-4 space-y-2">
+                            {result.analysis.keyPoints.map((point, index) => (
+                              <li key={index} className="text-base text-[#002654]/70 font-serif">
+                                • {point}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
                         {result.source_url && (
-                          <p className="mt-2 text-sm text-gray-500">
-                            Source :{' '}
+                          <div>
+                            <h4 className="text-lg font-serif font-medium text-[#002654]">Source</h4>
                             <a
                               href={result.source_url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-indigo-600 hover:text-indigo-500"
+                              className="mt-2 inline-block text-base text-[#002654] hover:text-[#EF4135] font-serif underline transition-colors"
                             >
-                              Lien
+                              Voir la source
                             </a>
-                          </p>
-                        )}
-
-                        <div className="mt-6">
-                          <h4 className="text-base font-semibold text-gray-900">
-                            Analyse IA
-                          </h4>
-                          <div className="mt-2 space-y-4">
-                            <p className="text-gray-600">{result.analysis.summary}</p>
-                            <ul className="list-disc pl-5 text-gray-600">
-                              {result.analysis.keyPoints.map((point: string, index: number) => (
-                                <li key={index}>{point}</li>
-                              ))}
-                            </ul>
-                            <div className="flex items-center space-x-4">
-                              <div>
-                                <span className="text-sm font-medium text-gray-500">
-                                  Score d&apos;alignement :
-                                </span>
-                                <span className="ml-2 text-sm font-semibold text-gray-900">
-                                  {result.analysis.alignment}%
-                                </span>
-                              </div>
-                              <div>
-                                <span className="text-sm font-medium text-gray-500">
-                                  Confiance :
-                                </span>
-                                <span className="ml-2 text-sm font-semibold text-gray-900">
-                                  {result.analysis.confidence}%
-                                </span>
-                              </div>
-                            </div>
                           </div>
+                        )}
+                        <div>
+                          <p className="text-sm text-[#002654]/60 font-serif">
+                            Dernière mise à jour : {formatDate(result.created_at)}
+                          </p>
                         </div>
                       </div>
-                    </div>
-                    <div className="bg-gray-50 px-4 py-4 sm:px-6">
-                      <p className="text-xs text-gray-500">
-                        Dernière mise à jour : {formatDate(result.created_at)}
-                      </p>
                     </div>
                   </div>
                 )

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
@@ -8,13 +8,18 @@ import { BackForwardCache } from "@/components/BackForwardCache";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "AgorIA - Assistant démocratique intelligent",
+  title: "Korev AI - Assistant démocratique intelligent",
   description: "Comparez les programmes politiques et analysez les positions des candidats avec l'aide de l'IA.",
   viewport: "width=device-width, initial-scale=1",
   robots: "index, follow",
   alternates: {
     canonical: "https://agoria.app"
   }
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1
 };
 
 export default function RootLayout({
@@ -27,7 +32,7 @@ export default function RootLayout({
       <head>
         <StructuredData
           type="WebSite"
-          name="AgorIA"
+          name="Korev AI"
           description="Comparez les programmes politiques et analysez les positions des candidats avec l'aide de l'IA."
           url="https://agoria.app"
           datePublished={new Date().toISOString()}
@@ -37,23 +42,26 @@ export default function RootLayout({
       <body className={inter.className}>
         <BackForwardCache />
         <div className="min-h-screen flex flex-col">
-          <header className="border-b">
+          <header className="border-b border-[#002654]/10 bg-white/80 backdrop-blur-sm">
             <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between h-16">
-                <div className="flex">
-                  <Link href="/" className="flex items-center">
-                    <span className="text-xl font-bold text-indigo-600">AgorIA</span>
+                <div className="flex items-center">
+                  <Link href="/" className="flex items-center group">
+                    <span className="text-2xl font-bold font-serif text-[#002654] relative">
+                      Korev AI
+                      <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-[#002654] via-white to-[#EF4135] transform scale-x-0 group-hover:scale-x-100 transition-transform"></span>
+                    </span>
                   </Link>
-                  <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+                  <div className="hidden sm:ml-8 sm:flex sm:space-x-8">
                     <Link
                       href="/themes"
-                      className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900"
+                      className="inline-flex items-center px-3 py-2 text-base font-serif font-medium text-[#002654]/80 hover:text-[#002654] hover:bg-[#002654]/5 rounded-lg transition-colors"
                     >
                       Thèmes
                     </Link>
                     <Link
                       href="/compare"
-                      className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900"
+                      className="inline-flex items-center px-3 py-2 text-base font-serif font-medium text-[#002654]/80 hover:text-[#002654] hover:bg-[#002654]/5 rounded-lg transition-colors"
                     >
                       Comparer
                     </Link>
@@ -67,22 +75,22 @@ export default function RootLayout({
             {children}
           </main>
 
-          <footer className="bg-white">
+          <footer className="bg-white border-t border-[#002654]/10">
             <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 md:flex md:items-center md:justify-between lg:px-8">
               <div className="flex justify-center space-x-6 md:order-2">
-                <Link href="/about" className="text-gray-400 hover:text-gray-500">
+                <Link href="/about" className="text-[#002654]/60 hover:text-[#002654] transition-colors font-serif">
                   À propos
                 </Link>
-                <Link href="/privacy" className="text-gray-400 hover:text-gray-500">
+                <Link href="/privacy" className="text-[#002654]/60 hover:text-[#002654] transition-colors font-serif">
                   Confidentialité
                 </Link>
-                <Link href="/terms" className="text-gray-400 hover:text-gray-500">
+                <Link href="/terms" className="text-[#002654]/60 hover:text-[#002654] transition-colors font-serif">
                   Conditions
                 </Link>
               </div>
               <div className="mt-8 md:mt-0 md:order-1">
-                <p className="text-center text-base text-gray-400">
-                  &copy; {new Date().getFullYear()} AgorIA. Tous droits réservés.
+                <p className="text-center text-base text-[#002654]/60 font-serif">
+                  &copy; {new Date().getFullYear()} Korev AI. Tous droits réservés.
                 </p>
               </div>
             </div>
