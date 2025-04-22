@@ -1,36 +1,130 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🗳️ AgorIA
 
-## Getting Started
+Application civic-tech développée par Korev AI qui utilise l'intelligence artificielle pour aider les citoyens à comparer les positions des candidats politiques sur différents thèmes.
 
-First, run the development server:
+## ⚠️ Propriété intellectuelle
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Ce logiciel est la propriété exclusive de Korev AI SAS. Tous droits réservés.
+- Code source protégé et confidentiel
+- Utilisation soumise à autorisation
+- Voir le fichier `LICENSE` pour les conditions détaillées
+
+## 🎯 Fonctionnalités
+
+- **Comparaison des positions** : Visualisez et comparez les positions des candidats sur différents thèmes
+- **Analyse IA** : Obtenez une analyse objective des convergences et divergences entre les candidats
+- **Matching citoyen** : Découvrez avec quels candidats vos opinions s'alignent le plus
+- **Sauvegarde des réponses** : Conservez vos réponses pour suivre l'évolution de vos alignements
+
+## 🛠️ Technologies
+
+- **Frontend** : Next.js 14 avec App Router
+- **UI/UX** : Tailwind CSS + shadcn/ui
+- **Base de données** : Supabase (PostgreSQL)
+- **IA** : OpenAI GPT-4
+- **Authentification** : Supabase Auth (à venir)
+
+## 📦 Structure du projet
+
+```
+src/
+├── app/                    # Pages Next.js (App Router)
+├── components/            
+│   ├── AIAnalysis/        # Analyse IA des positions
+│   ├── ComparisonGrid/    # Grille de comparaison
+│   ├── Scoreboard/        # Tableau des scores d'alignement
+│   └── ui/                # Composants UI réutilisables
+├── lib/
+│   ├── openai/            # Configuration et fonctions OpenAI
+│   ├── supabase/          # Configuration et fonctions Supabase
+│   ├── positions.ts       # Logique de sélection des positions
+│   ├── scoring.ts         # Calcul des scores d'alignement
+│   └── utils.ts           # Utilitaires
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Clonez le dépôt :
+```bash
+git clone https://github.com/Makk7709/AgoriIA.git
+cd AgoriIA
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. Installez les dépendances :
+```bash
+npm install
+```
 
-## Learn More
+3. Configurez les variables d'environnement :
+```bash
+cp .env.example .env.local
+```
+Puis remplissez les variables dans `.env.local` :
+```
+NEXT_PUBLIC_SUPABASE_URL=votre_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=votre_clé
+OPENAI_API_KEY=votre_clé
+```
 
-To learn more about Next.js, take a look at the following resources:
+4. Créez la table Supabase :
+```sql
+create table user_responses (
+  id uuid primary key,
+  theme_id text not null,
+  user_id uuid not null,
+  responses jsonb not null,
+  alignment_scores jsonb not null,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+5. Lancez le serveur de développement :
+```bash
+npm run dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📝 Documentation technique
 
-## Deploy on Vercel
+### Matching citoyen
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Le système de matching compare les réponses de l'utilisateur avec les positions des candidats :
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Sélection des positions** : 3 positions représentatives sont choisies pour le questionnaire
+- **Calcul des scores** :
+  - D'accord ↔ D'accord = +1
+  - Pas d'accord ↔ Pas d'accord = +1
+  - Neutre = 0
+  - Sinon = -1
+- **Sauvegarde** : Les réponses et scores sont stockés dans Supabase (table `user_responses`)
+
+### Analyse IA
+
+L'analyse utilise GPT-4 pour :
+- Résumer objectivement les positions
+- Identifier les points de convergence
+- Repérer les divergences majeures
+- Fournir un score de confiance
+
+## 📄 Licence et Contact
+
+© 2025 Korev AI SAS. Tous droits réservés.
+
+Pour toute demande d'accès, d'utilisation ou de partenariat :
+- Email : [email]
+- Site web : [site]
+
+## 🙏 Technologies tierces
+
+Ce projet utilise les technologies suivantes sous leurs licences respectives :
+- [shadcn/ui](https://ui.shadcn.com/) - MIT License
+- [Supabase](https://supabase.com/) - Apache 2.0
+- [OpenAI](https://openai.com/) - Usage commercial sous contrat
+
+## 🤝 Contribution
+
+Les contributions sont les bienvenues ! N'hésitez pas à :
+1. Fork le projet
+2. Créer une branche (`git checkout -b feature/AmazingFeature`)
+3. Commit vos changements (`git commit -m 'Add some AmazingFeature'`)
+4. Push sur la branche (`git push origin feature/AmazingFeature`)
+5. Ouvrir une Pull Request
