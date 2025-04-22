@@ -1,8 +1,10 @@
+"use client"
+
 import { useState, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
-import { Send } from 'lucide-react'
+import { Send, Flag } from 'lucide-react'
 
 interface Message {
   id: string
@@ -12,9 +14,9 @@ interface Message {
 }
 
 const INITIAL_SUGGESTIONS = [
-  "Quels sont les candidats les plus proches de mes idées ?",
-  "Explique-moi les positions sur la retraite.",
-  "Que dit le programme de Karim Lemoine sur la sécurité ?"
+  "Quels candidats soutiennent le RIC ?",
+  "Comparez les positions sur la transition écologique",
+  "Expliquez-moi les différentes propositions sur le pouvoir d'achat"
 ]
 
 export function ChatPanel() {
@@ -80,28 +82,41 @@ export function ChatPanel() {
   }
 
   return (
-    <div className="flex flex-col h-[600px] max-w-3xl mx-auto bg-[#F5F5F5] rounded-lg shadow-lg">
+    <div className="flex flex-col h-[800px] w-full max-w-5xl mx-auto bg-white/80 backdrop-blur-sm rounded-xl shadow-2xl border-2 border-[#002654]/10">
+      {/* Header */}
+      <div className="flex items-center gap-3 p-6 border-b-2 border-[#002654]/10 bg-gradient-to-r from-[#002654] via-white to-[#EF4135] text-white rounded-t-xl">
+        <Flag className="h-6 w-6" />
+        <h2 className="text-2xl font-serif font-bold drop-shadow-md">Assistant Citoyen</h2>
+      </div>
+
       {/* Messages container */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-8 space-y-8 bg-gradient-to-b from-white via-[#F4F6F8] to-white">
         {messages.length === 0 && (
-          <div className="flex flex-col items-center justify-center h-full space-y-4">
-            <h2 className="text-2xl font-semibold text-[#002654]">
-              Bienvenue sur AgorIA
-            </h2>
-            <p className="text-gray-600 text-center max-w-md">
-              Je suis votre assistant citoyen. Je peux vous aider à comprendre les positions des candidats sur différents sujets.
-            </p>
-            <div className="flex flex-col gap-2 w-full max-w-md">
-              {INITIAL_SUGGESTIONS.map((suggestion) => (
-                <Button
-                  key={suggestion}
-                  variant="outline"
-                  className="text-left"
-                  onClick={() => handleSubmit(suggestion)}
-                >
-                  {suggestion}
-                </Button>
-              ))}
+          <div className="flex flex-col items-center justify-center h-full space-y-8">
+            <div className="text-center space-y-4">
+              <h2 className="text-3xl font-serif font-bold text-[#002654]">
+                Bienvenue sur AgorIA
+              </h2>
+              <p className="text-[#002654]/80 max-w-2xl font-serif text-lg leading-relaxed">
+                Je suis votre assistant citoyen, au service de la démocratie. Je peux vous aider à comprendre les positions des candidats sur différents sujets.
+              </p>
+            </div>
+            <div className="flex flex-col gap-4 w-full max-w-2xl">
+              <p className="text-base font-bold text-[#002654] uppercase tracking-wider text-center mb-4">
+                Questions suggérées
+              </p>
+              <div className="grid gap-4">
+                {INITIAL_SUGGESTIONS.map((suggestion) => (
+                  <Button
+                    key={suggestion}
+                    variant="outline"
+                    className="w-full text-left font-serif text-lg py-6 px-8 bg-white hover:bg-gradient-to-r hover:from-[#002654] hover:via-[#002654] hover:to-[#EF4135] text-[#002654] hover:text-white transition-all border-2 border-[#002654]/20 hover:border-transparent shadow-md hover:shadow-lg rounded-xl"
+                    onClick={() => handleSubmit(suggestion)}
+                  >
+                    {suggestion}
+                  </Button>
+                ))}
+              </div>
             </div>
           </div>
         )}
@@ -116,10 +131,10 @@ export function ChatPanel() {
           >
             <div
               className={cn(
-                "max-w-[80%] rounded-lg p-4",
+                "max-w-[85%] rounded-xl p-6 font-serif text-lg leading-relaxed",
                 message.role === 'user'
-                  ? 'bg-[#002654] text-white'
-                  : 'bg-white border border-gray-200'
+                  ? 'bg-gradient-to-r from-[#002654] to-[#002654] text-white shadow-lg'
+                  : 'bg-white border-2 border-[#002654]/20 shadow-md'
               )}
             >
               {message.content}
@@ -128,11 +143,11 @@ export function ChatPanel() {
         ))}
         {isLoading && (
           <div className="flex justify-start">
-            <div className="bg-white border border-gray-200 rounded-lg p-4">
-              <div className="flex space-x-2">
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100" />
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200" />
+            <div className="bg-white border-2 border-[#002654]/20 rounded-xl p-6 shadow-md">
+              <div className="flex space-x-3">
+                <div className="w-3 h-3 bg-[#002654] rounded-full animate-bounce" />
+                <div className="w-3 h-3 bg-white border-2 border-[#002654] rounded-full animate-bounce delay-100" />
+                <div className="w-3 h-3 bg-[#EF4135] rounded-full animate-bounce delay-200" />
               </div>
             </div>
           </div>
@@ -141,19 +156,19 @@ export function ChatPanel() {
       </div>
 
       {/* Input container */}
-      <div className="border-t border-gray-200 p-4">
+      <div className="border-t-2 border-[#002654]/10 bg-white p-6 rounded-b-xl">
         <form
           onSubmit={(e) => {
             e.preventDefault()
             handleSubmit(input)
           }}
-          className="flex gap-2"
+          className="flex gap-4"
         >
           <Textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Posez votre question..."
-            className="min-h-[50px] max-h-[200px]"
+            placeholder="Posez votre question sur les programmes..."
+            className="min-h-[60px] max-h-[200px] font-serif text-lg focus:border-[#002654] focus:ring-[#002654] resize-none rounded-xl"
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault()
@@ -164,9 +179,9 @@ export function ChatPanel() {
           <Button 
             type="submit" 
             disabled={isLoading || !input.trim()}
-            className="bg-[#002654] hover:bg-[#001b3b]"
+            className="bg-gradient-to-r from-[#002654] to-[#EF4135] hover:from-[#001b3b] hover:to-[#d93a2f] text-white px-8 rounded-xl shadow-md hover:shadow-lg transition-all"
           >
-            <Send className="h-4 w-4" />
+            <Send className="h-5 w-5" />
           </Button>
         </form>
       </div>
