@@ -93,7 +93,7 @@ export default function ThemePage({ params }: PageProps) {
           <ComparisonGrid
             positions={positions}
             onAnalyze={async (positionsToAnalyze) => {
-              const analysis = await analyzePositions(params.theme, positionsToAnalyze)
+              await analyzePositions(params.theme, positionsToAnalyze)
               // TODO: Handle analysis results
             }}
             analysis={null}

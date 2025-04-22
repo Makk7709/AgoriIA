@@ -18,11 +18,13 @@ Ce logiciel est la propriété exclusive de Korev AI SAS. Tous droits réservés
 
 ## 🛠️ Technologies
 
-- **Frontend** : Next.js 14 avec App Router
+- **Frontend** : Next.js 15.3.1 avec App Router
 - **UI/UX** : Tailwind CSS + shadcn/ui
 - **Base de données** : Supabase (PostgreSQL)
 - **IA** : OpenAI GPT-4
 - **Authentification** : Supabase Auth (à venir)
+- **Tests** : Jest, Lighthouse CI, Playwright
+- **Accessibilité** : Axe Core, Jest Axe
 
 ## 📦 Structure du projet
 
@@ -40,6 +42,8 @@ src/
 │   ├── positions.ts       # Logique de sélection des positions
 │   ├── scoring.ts         # Calcul des scores d'alignement
 │   └── utils.ts           # Utilitaires
+├── tests/                 # Tests unitaires et d'intégration
+└── types/                 # Types TypeScript
 ```
 
 ## 🚀 Installation
@@ -110,8 +114,8 @@ L'analyse utilise GPT-4 pour :
 © 2025 Korev AI SAS. Tous droits réservés.
 
 Pour toute demande d'accès, d'utilisation ou de partenariat :
-- Email : [email]
-- Site web : [site]
+- Email : contact@korev-ai.com
+- Site web : www.korev-ai.com
 
 ## 🙏 Technologies tierces
 
@@ -122,14 +126,9 @@ Ce projet utilise les technologies suivantes sous leurs licences respectives :
 
 ## 🤝 Contribution
 
-Les contributions sont les bienvenues ! N'hésitez pas à :
-1. Fork le projet
-2. Créer une branche (`git checkout -b feature/AmazingFeature`)
-3. Commit vos changements (`git commit -m 'Add some AmazingFeature'`)
-4. Push sur la branche (`git push origin feature/AmazingFeature`)
-5. Ouvrir une Pull Request
+Les contributions sont les bienvenues ! Consultez notre [guide de contribution](CONTRIBUTING.md) pour plus de détails.
 
-## Tests et Qualité
+## 🧪 Tests et Qualité
 
 Le projet inclut plusieurs niveaux de tests et d'audits :
 
@@ -163,28 +162,13 @@ npm run lint
 npm run type-check
 ```
 
-## Structure du projet
-
-```
-agoria/
-├── src/
-│   ├── app/              # Pages et routes Next.js
-│   ├── components/       # Composants React réutilisables
-│   ├── lib/             # Utilitaires et configurations
-│   ├── tests/           # Tests unitaires et d'intégration
-│   └── types/           # Types TypeScript
-├── public/              # Assets statiques
-├── docs/               # Documentation
-└── scripts/            # Scripts utilitaires
-```
-
-## Documentation
+## 📚 Documentation
 
 - [Guide de contribution](CONTRIBUTING.md)
 - [Documentation des tests](docs/TESTING.md)
 - [Changelog](CHANGELOG.md)
 
-## Améliorations récentes
+## ✨ Améliorations récentes
 
 - ✅ Configuration complète de Lighthouse CI
 - ✅ Ajout de données structurées JSON-LD
@@ -192,22 +176,10 @@ agoria/
 - ✅ Amélioration des métadonnées SEO
 - ✅ Tests d'accessibilité automatisés
 
-## Prochaines étapes
+## 🎯 Prochaines étapes
 
 - [ ] Optimisation des performances
 - [ ] Amélioration de l'accessibilité
 - [ ] Ajout de nouvelles fonctionnalités d'analyse
 - [ ] Intégration de tests end-to-end
 - [ ] Mise en place du monitoring
-
-## Contribution
-
-Les contributions sont les bienvenues ! Consultez notre [guide de contribution](CONTRIBUTING.md) pour plus de détails.
-
-## Licence
-
-Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
-
-## Contact
-
-Pour toute question ou suggestion, n'hésitez pas à [ouvrir une issue](https://github.com/Makk7709/AgoriIA/issues).

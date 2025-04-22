@@ -53,4 +53,62 @@ Format: JSON with fields summary, keyPoints (array), alignment (number), confide
 
   const result = JSON.parse(response.choices[0].message.content || '{}')
   return result as AIAnalysisResult
-} 
+}
+
+export const config = {
+  model: "gpt-4-turbo-preview",
+  temperature: 0.3,
+  maxTokens: 2000,
+  systemPrompt: "Vous êtes un assistant civic-tech neutre qui aide à analyser les programmes politiques de manière objective.",
+} as const;
+
+export const themes = [
+  {
+    id: "economy",
+    name: "Économie",
+    description: "Politiques économiques, emploi, croissance, fiscalité",
+    icon: "Scale",
+  },
+  {
+    id: "ecology",
+    name: "Écologie",
+    description: "Transition écologique, énergie, biodiversité, climat",
+    icon: "Leaf",
+  },
+  {
+    id: "security",
+    name: "Sécurité",
+    description: "Sécurité intérieure, justice, police, défense",
+    icon: "Shield",
+  },
+  {
+    id: "education",
+    name: "Éducation",
+    description: "École, formation, recherche, jeunesse",
+    icon: "GraduationCap",
+  },
+  {
+    id: "health",
+    name: "Santé",
+    description: "Santé publique, hôpital, prévention, dépendance",
+    icon: "Heart",
+  },
+  {
+    id: "europe",
+    name: "Europe",
+    description: "Union européenne, relations internationales, diplomatie",
+    icon: "Globe",
+  },
+  {
+    id: "institutions",
+    name: "Institutions",
+    description: "Démocratie, institutions, décentralisation, réformes",
+    icon: "Building",
+  },
+  {
+    id: "social",
+    name: "Social",
+    description: "Protection sociale, solidarité, logement, culture",
+    icon: "Users",
+  },
+] as const; 

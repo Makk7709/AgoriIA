@@ -1,0 +1,73 @@
+[
+  {
+    "name": "minScore",
+    "expected": 0.8,
+    "actual": null,
+    "values": [
+      null,
+      null,
+      null
+    ],
+    "operator": ">=",
+    "passed": false,
+    "message": "Audit did not produce a value at all. \"minScore\" might not be a valid assertion for this audit.",
+    "auditId": "structured-data",
+    "level": "warn",
+    "url": "http://localhost:3000/",
+    "auditTitle": "Structured data is valid",
+    "auditDocumentationLink": "https://developer.chrome.com/docs/lighthouse/seo/structured-data/"
+  },
+  {
+    "name": "minScore",
+    "expected": 0.8,
+    "actual": null,
+    "values": [
+      null,
+      null,
+      null
+    ],
+    "operator": ">=",
+    "passed": false,
+    "message": "Audit did not produce a value at all. \"minScore\" might not be a valid assertion for this audit.",
+    "auditId": "structured-data",
+    "level": "warn",
+    "url": "http://localhost:3000/themes",
+    "auditTitle": "Structured data is valid",
+    "auditDocumentationLink": "https://developer.chrome.com/docs/lighthouse/seo/structured-data/"
+  },
+  {
+    "name": "minScore",
+    "expected": 0.8,
+    "actual": null,
+    "values": [
+      null,
+      null,
+      null
+    ],
+    "operator": ">=",
+    "passed": false,
+    "message": "Audit did not produce a value at all. \"minScore\" might not be a valid assertion for this audit.",
+    "auditId": "structured-data",
+    "level": "warn",
+    "url": "http://localhost:3000/compare",
+    "auditTitle": "Structured data is valid",
+    "auditDocumentationLink": "https://developer.chrome.com/docs/lighthouse/seo/structured-data/"
+  },
+  {
+    "name": "minScore",
+    "expected": 0.8,
+    "actual": 0,
+    "values": [
+      0,
+      0,
+      0
+    ],
+    "operator": ">=",
+    "passed": false,
+    "auditId": "bf-cache",
+    "level": "warn",
+    "url": "http://localhost:3000/compare",
+    "auditTitle": "Page prevented back/forward cache restoration",
+    "auditDocumentationLink": "https://developer.chrome.com/docs/lighthouse/performance/bf-cache/"
+  }
+]

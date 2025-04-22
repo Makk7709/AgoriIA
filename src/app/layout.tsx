@@ -2,12 +2,19 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
+import { StructuredData } from "@/components/StructuredData";
+import { BackForwardCache } from "@/components/BackForwardCache";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "AgorIA - Assistant démocratique intelligent",
   description: "Comparez les programmes politiques et analysez les positions des candidats avec l'aide de l'IA.",
+  viewport: "width=device-width, initial-scale=1",
+  robots: "index, follow",
+  alternates: {
+    canonical: "https://agoria.app"
+  }
 };
 
 export default function RootLayout({
@@ -17,7 +24,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr">
+      <head>
+        <StructuredData
+          type="WebSite"
+          name="AgorIA"
+          description="Comparez les programmes politiques et analysez les positions des candidats avec l'aide de l'IA."
+          url="https://agoria.app"
+          datePublished={new Date().toISOString()}
+          dateModified={new Date().toISOString()}
+        />
+      </head>
       <body className={inter.className}>
+        <BackForwardCache />
         <div className="min-h-screen flex flex-col">
           <header className="border-b">
             <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
