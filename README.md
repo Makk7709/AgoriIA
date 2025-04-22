@@ -128,3 +128,86 @@ Les contributions sont les bienvenues ! N'hésitez pas à :
 3. Commit vos changements (`git commit -m 'Add some AmazingFeature'`)
 4. Push sur la branche (`git push origin feature/AmazingFeature`)
 5. Ouvrir une Pull Request
+
+## Tests et Qualité
+
+Le projet inclut plusieurs niveaux de tests et d'audits :
+
+### Tests automatisés
+```bash
+# Tests unitaires et d'intégration
+npm run test
+
+# Tests d'accessibilité
+npm run test:a11y
+
+# Tests end-to-end
+npm run test:e2e
+```
+
+### Audit Lighthouse
+```bash
+# Audit complet
+npm run audit:lighthouse
+
+# Audit avec configuration personnalisée
+npm run test:lighthouse
+```
+
+### Vérification de la qualité
+```bash
+# Linting
+npm run lint
+
+# Vérification des types
+npm run type-check
+```
+
+## Structure du projet
+
+```
+agoria/
+├── src/
+│   ├── app/              # Pages et routes Next.js
+│   ├── components/       # Composants React réutilisables
+│   ├── lib/             # Utilitaires et configurations
+│   ├── tests/           # Tests unitaires et d'intégration
+│   └── types/           # Types TypeScript
+├── public/              # Assets statiques
+├── docs/               # Documentation
+└── scripts/            # Scripts utilitaires
+```
+
+## Documentation
+
+- [Guide de contribution](CONTRIBUTING.md)
+- [Documentation des tests](docs/TESTING.md)
+- [Changelog](CHANGELOG.md)
+
+## Améliorations récentes
+
+- ✅ Configuration complète de Lighthouse CI
+- ✅ Ajout de données structurées JSON-LD
+- ✅ Optimisation du cache navigateur
+- ✅ Amélioration des métadonnées SEO
+- ✅ Tests d'accessibilité automatisés
+
+## Prochaines étapes
+
+- [ ] Optimisation des performances
+- [ ] Amélioration de l'accessibilité
+- [ ] Ajout de nouvelles fonctionnalités d'analyse
+- [ ] Intégration de tests end-to-end
+- [ ] Mise en place du monitoring
+
+## Contribution
+
+Les contributions sont les bienvenues ! Consultez notre [guide de contribution](CONTRIBUTING.md) pour plus de détails.
+
+## Licence
+
+Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
+
+## Contact
+
+Pour toute question ou suggestion, n'hésitez pas à [ouvrir une issue](https://github.com/Makk7709/AgoriIA/issues).
