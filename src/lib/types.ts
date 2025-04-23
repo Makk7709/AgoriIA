@@ -5,7 +5,7 @@ export interface Position {
   content: string
   source_url: string | null
   created_at: string
-  candidate?: {
+  candidate: {
     id: string
     name: string
     party: string

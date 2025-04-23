@@ -31,38 +31,50 @@ Tu peux t'appuyer sur ces données :
 export async function POST(request: Request) {
   try {
     const { question, theme } = await request.json()
+    console.log('Received request:', { question, theme })
 
     const { data: positions, error } = await supabase
       .from('positions')
       .select(`
         id,
         theme_id,
-        title,
-        description,
+        candidate_id,
+        content,
+        source_url,
         created_at,
-        candidate_positions (
-          candidate (
-            id,
-            name,
-            party
-          )
+        candidate:candidates (
+          id,
+          name,
+          party
         )
       `)
-      .eq('theme_id', theme) as { data: Position[], error: any }
+      .eq('theme_id', theme)
 
     if (error) {
+      console.error('Supabase error:', error)
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
     if (!positions) {
+      console.log('No positions found for theme:', theme)
       return NextResponse.json({ error: 'No positions found' }, { status: 404 })
     }
+
+    console.log('Found positions:', positions.length)
+
+    // Transform the data to match the Position interface
+    const transformedPositions = positions.map(pos => ({
+      ...pos,
+      candidate: pos.candidate[0]
+    })) as Position[]
 
     // Create messages array for OpenAI
     const messages = [
       { role: 'system', content: SYSTEM_PROMPT },
-      { role: 'user', content: `Question: ${question}\n\nPositions disponibles: ${JSON.stringify(positions)}` }
+      { role: 'user', content: `Question: ${question}\n\nPositions disponibles: ${JSON.stringify(transformedPositions)}` }
     ]
+
+    console.log('Sending request to OpenAI with messages:', messages)
 
     // Get response from OpenAI
     const completion = await openai.chat.completions.create({
@@ -73,6 +85,7 @@ export async function POST(request: Request) {
     })
 
     const response = completion.choices[0]?.message?.content || "Désolé, je n'ai pas pu générer une réponse."
+    console.log('OpenAI response:', response)
 
     return NextResponse.json({ response })
   } catch (error) {

@@ -48,15 +48,24 @@ export function ChatPanel() {
     setIsLoading(true)
 
     try {
+      console.log('Sending request to API with:', { question: content, theme: 'general' })
       const response = await fetch('/api/ask', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question: content })
+        body: JSON.stringify({ 
+          question: content,
+          theme: 'general'
+        })
       })
 
-      if (!response.ok) throw new Error('Failed to get response')
+      if (!response.ok) {
+        const errorData = await response.json()
+        console.error('API Error:', errorData)
+        throw new Error(errorData.error || 'Failed to get response')
+      }
 
       const data = await response.json()
+      console.log('API Response:', data)
       
       // Add assistant message
       const assistantMessage: Message = {
@@ -65,9 +74,10 @@ export function ChatPanel() {
         role: 'assistant',
         timestamp: new Date()
       }
+      console.log('Adding assistant message:', assistantMessage)
       setMessages(prev => [...prev, assistantMessage])
     } catch (error) {
-      console.error('Error:', error)
+      console.error('Error in handleSubmit:', error)
       // Add error message
       const errorMessage: Message = {
         id: crypto.randomUUID(),
@@ -134,7 +144,7 @@ export function ChatPanel() {
                 "max-w-[85%] rounded-xl p-6 font-serif text-lg leading-relaxed transition-all duration-300",
                 message.role === 'user'
                   ? 'bg-gradient-to-r from-[#002654] to-[#002654]/90 text-white shadow-lg hover:shadow-xl'
-                  : 'bg-white/95 border border-[#002654]/20 shadow hover:shadow-lg'
+                  : 'bg-white border-2 border-[#002654]/20 text-black shadow hover:shadow-lg'
               )}
             >
               {message.content}
@@ -143,7 +153,7 @@ export function ChatPanel() {
         ))}
         {isLoading && (
           <div className="flex justify-start">
-            <div className="bg-white/95 border border-[#002654]/20 rounded-xl p-6 shadow">
+            <div className="bg-white border-2 border-[#002654]/20 rounded-xl p-6 shadow">
               <div className="flex space-x-3">
                 <div className="w-3 h-3 bg-[#002654] rounded-full animate-bounce" />
                 <div className="w-3 h-3 bg-white border-2 border-[#002654] rounded-full animate-bounce delay-100" />
@@ -168,7 +178,7 @@ export function ChatPanel() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Posez votre question sur les programmes..."
-            className="min-h-[60px] max-h-[200px] font-serif text-lg focus:border-[#002654] focus:ring-[#002654] resize-none rounded-xl transition-all duration-300"
+            className="min-h-[60px] max-h-[200px] font-serif text-lg text-black bg-white border-2 border-[#002654]/20 focus:border-[#002654] focus:ring-2 focus:ring-[#002654]/20 resize-none rounded-xl px-4 py-3 transition-all duration-300"
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault()
@@ -179,7 +189,8 @@ export function ChatPanel() {
           <Button 
             type="submit" 
             disabled={isLoading || !input.trim()}
-            className="bg-gradient-to-r from-[#002654] to-[#EF4135] hover:from-[#001b3b] hover:to-[#d93a2f] text-white px-8 rounded-xl shadow hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-gradient-to-r from-[#002654] to-[#EF4135] hover:from-[#001b3b] hover:to-[#d93a2f] text-white px-8 rounded-xl shadow hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            onClick={() => handleSubmit(input)}
           >
             <Send className="h-5 w-5" />
           </Button>
