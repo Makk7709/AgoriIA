@@ -178,7 +178,7 @@ export function ChatPanel() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Posez votre question sur les programmes..."
-            className="min-h-[60px] max-h-[200px] font-serif text-lg text-black bg-white border-2 border-[#002654]/20 focus:border-[#002654] focus:ring-2 focus:ring-[#002654]/20 resize-none rounded-xl px-4 py-3 transition-all duration-300"
+            className="min-h-[120px] max-h-[200px] font-serif text-lg text-black bg-white border-2 border-[#002654]/20 focus:border-[#002654] focus:ring-2 focus:ring-[#002654]/20 resize-none rounded-xl px-4 py-3 transition-all duration-300"
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault()
@@ -189,10 +189,10 @@ export function ChatPanel() {
           <Button 
             type="submit" 
             disabled={isLoading || !input.trim()}
-            className="bg-gradient-to-r from-[#002654] to-[#EF4135] hover:from-[#001b3b] hover:to-[#d93a2f] text-white px-8 rounded-xl shadow hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            className="h-[120px] bg-gradient-to-r from-[#002654] to-[#EF4135] hover:from-[#001b3b] hover:to-[#d93a2f] text-white px-8 rounded-xl shadow hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             onClick={() => handleSubmit(input)}
           >
-            <Send className="h-5 w-5" />
+            <Send className="h-8 w-8" />
           </Button>
         </form>
       </div>
