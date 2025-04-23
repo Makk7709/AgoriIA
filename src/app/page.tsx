@@ -34,12 +34,12 @@ export default function Home() {
       />
       <main className="flex min-h-screen flex-col items-center p-8 md:p-24">
         <div className="z-10 w-full max-w-5xl mb-16 text-center">
-          <div className="flex flex-col items-center justify-center gap-6">
-            <h1 className="text-6xl md:text-8xl font-bold tracking-tight text-[#002654] font-serif relative group">
+          <div className="flex flex-col items-center justify-center gap-16">
+            <h1 className="text-8xl md:text-[12rem] font-bold tracking-tight bg-gradient-to-r from-[#002654] via-[#f8f9fa] to-[#EF4135] bg-clip-text text-transparent drop-shadow-[0_2px_2px_rgba(0,0,0,0.3)] font-serif relative group [text-shadow:_2px_2px_0_rgb(0_0_0_/_40%)] z-20">
               AgorIA
-              <span className="absolute -bottom-2 left-0 w-full h-1.5 bg-gradient-to-r from-[#002654] via-white to-[#EF4135] transform scale-x-100 group-hover:scale-x-110 transition-transform duration-300 ease-in-out"></span>
+              <span className="absolute -bottom-8 left-0 w-full h-1.5 bg-gradient-to-r from-[#002654] via-[#f8f9fa] to-[#EF4135] transform scale-x-100 group-hover:scale-x-110 transition-transform duration-300 ease-in-out"></span>
             </h1>
-            <div className="flex flex-col items-center gap-3">
+            <div className="flex flex-col items-center gap-6">
               <p className="text-2xl md:text-3xl text-[#002654]/90 font-serif italic">
                 Votre assistant démocratique intelligent
               </p>
