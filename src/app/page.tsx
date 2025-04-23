@@ -3,7 +3,6 @@ import { ArrowRightIcon } from '@heroicons/react/24/outline'
 import { Metadata } from 'next'
 import { StructuredData } from '@/components/StructuredData'
 import { ChatPanel } from '@/components/ChatPanel'
-import { About } from '@/components/About'
 
 export const metadata: Metadata = {
   title: 'AgorIA - Assistant démocratique intelligent',
@@ -54,8 +53,6 @@ export default function Home() {
         <div className="w-full max-w-5xl backdrop-blur-sm bg-white/50 rounded-2xl shadow-lg border border-white/20 p-6">
           <ChatPanel />
         </div>
-
-        <About />
 
         <div className="mt-16 grid text-center lg:max-w-5xl lg:w-full lg:grid-cols-4 lg:text-left gap-6">
           <div className="group rounded-xl border border-[#002654]/10 px-6 py-5 transition-all hover:border-[#002654] hover:shadow-lg hover:bg-white/50 backdrop-blur-sm">

@@ -1,26 +1,27 @@
-import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
+import { Metadata, Viewport } from 'next'
+import { Inter } from 'next/font/google'
+import './globals.css'
 import Link from "next/link";
 import { StructuredData } from "@/components/StructuredData";
 import { BackForwardCache } from "@/components/BackForwardCache";
+import { AdminButton } from "@/components/AdminButton";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: "Korev AI - Assistant démocratique intelligent",
-  description: "Comparez les programmes politiques et analysez les positions des candidats avec l'aide de l'IA.",
-  viewport: "width=device-width, initial-scale=1",
-  robots: "index, follow",
-  alternates: {
-    canonical: "https://agoria.app"
+  title: 'Agoria - Comparateur de programmes politiques',
+  description: 'Comparez les programmes politiques des candidats aux élections.',
+  icons: {
+    icon: '/favicon.ico'
   }
-};
+}
 
 export const viewport: Viewport = {
   width: 'device-width',
-  initialScale: 1
-};
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false
+}
 
 export default function RootLayout({
   children,
@@ -67,6 +68,9 @@ export default function RootLayout({
                     </Link>
                   </div>
                 </div>
+                <div className="flex items-center">
+                  <AdminButton />
+                </div>
               </div>
             </nav>
           </header>
@@ -98,5 +102,5 @@ export default function RootLayout({
         </div>
       </body>
     </html>
-  );
+  )
 }
