@@ -89,6 +89,9 @@ export default function RootLayout({
                 <Link href="/terms" className="text-[#002654]/60 hover:text-[#002654] transition-colors font-serif">
                   Conditions
                 </Link>
+                <Link href="/thanks" className="text-[#002654]/60 hover:text-[#002654] transition-colors font-serif">
+                  Remerciements
+                </Link>
               </div>
               <div className="mt-1 md:mt-0 md:order-1">
                 <p className="text-center text-base text-[#002654]/60 font-serif">

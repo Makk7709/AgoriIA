@@ -43,6 +43,12 @@ export default async function AdminDashboard() {
             >
               Gérer les thèmes
             </Link>
+            <Link
+              href="/admin/load"
+              className="px-6 py-3 rounded-xl bg-[#002654] text-white hover:bg-[#001b3b] transition-colors"
+            >
+              Charger un programme
+            </Link>
           </div>
         </div>
 

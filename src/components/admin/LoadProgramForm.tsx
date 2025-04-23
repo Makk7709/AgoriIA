@@ -484,23 +484,18 @@ export function LoadProgramForm() {
                   </>
                 )}
               </Button>
-              <Button 
-                type="button" 
-                variant="outline" 
-                className="flex-1" 
-                onClick={handleSave} 
-                disabled={isLoading || !positions.length}
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="bg-green-600 hover:bg-green-700 text-white"
               >
                 {isLoading ? (
                   <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Sauvegarde en cours...
                   </>
                 ) : (
-                  <>
-                    <FileText className="w-4 h-4 mr-2" />
-                    Sauvegarder
-                  </>
+                  'Sauvegarder'
                 )}
               </Button>
             </div>

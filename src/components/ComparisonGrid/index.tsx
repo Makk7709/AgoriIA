@@ -2,6 +2,8 @@ import { formatDate } from '@/lib/utils'
 import { AIAnalysis } from '@/components/AIAnalysis'
 import { type AIAnalysis as AIAnalysisType } from '@/lib/openai/summarize'
 import { Button } from '@/components/ui/button'
+import { BarChart2, Loader2 } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface Position {
   id: string
@@ -35,8 +37,24 @@ export function ComparisonGrid({
         <Button 
           onClick={() => onAnalyze(positions)}
           disabled={isAnalyzing}
+          className={cn(
+            "transition-all duration-200 ease-in-out",
+            "hover:scale-105",
+            "flex items-center gap-2"
+          )}
+          aria-label="Analyser les positions des candidats"
         >
-          {isAnalyzing ? 'Analyse en cours...' : 'Analyser les positions'}
+          {isAnalyzing ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Analyse en cours...
+            </>
+          ) : (
+            <>
+              <BarChart2 className="h-4 w-4" />
+              Analyser les positions
+            </>
+          )}
         </Button>
       </div>
 

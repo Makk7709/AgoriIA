@@ -73,7 +73,7 @@ export default function Home() {
         <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
           {/* En-tête */}
           <div className="text-center space-y-4">
-            <h1 className="text-7xl md:text-[10rem] font-bold tracking-tight font-serif relative group mx-auto mb-8">
+            <h1 className="text-8xl md:text-[12rem] font-bold tracking-tight font-serif relative group mx-auto mb-8">
               <span className="bg-gradient-to-r from-[#002654] via-[#003366] to-[#EF4135] bg-clip-text text-transparent drop-shadow-[0_2px_2px_rgba(0,0,0,0.3)] relative z-10">
                 AgorIA
               </span>

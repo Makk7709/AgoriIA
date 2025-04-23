@@ -1,97 +1,116 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
 import OpenAI from 'openai'
 import { supabase } from '@/lib/supabase/config'
-import { Position } from '@/lib/types'
+
+interface DatabasePosition {
+  content: string;
+  source_url: string;
+  candidates: Array<{
+    name: string;
+    party: string;
+  }>;
+  themes: Array<{
+    name: string;
+  }>;
+}
+
+interface FormattedPosition {
+  candidat: string | undefined;
+  parti: string | undefined;
+  theme: string | undefined;
+  position: string;
+  source: string;
+}
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-  dangerouslyAllowBrowser: true
+  apiKey: process.env.OPENAI_API_KEY
 })
 
 const SYSTEM_PROMPT = `Tu es un assistant citoyen républicain, neutre, factuel, et pédagogue.
 Ta mission : aider l'utilisateur à comprendre les positions politiques en comparant les programmes des candidats.
 
 Règles :
-- Toujours rester neutre (pas d'opinion)
-- Citer les noms des candidats si la base les contient
-- Structurer la réponse avec des titres clairs
-- Utiliser un ton républicain : "Comprendre pour mieux choisir"
+- Toujours rester neutre et objectif
+- Citer les sources quand disponibles
+- Structurer la réponse en 3 parties
+- Utiliser un ton républicain et pédagogue
 - Répondre en français avec un style digne et chaleureux
-- Utiliser les couleurs de la République (bleu #002654, blanc #ffffff, rouge #EF4135) dans les métaphores si pertinent
 
-Format de réponse :
-1. Introduction : contexte de la question
-2. Analyse : positions des candidats
-3. Conclusion : synthèse neutre et pédagogique
+Format de réponse OBLIGATOIRE :
+1. Introduction
+[Contexte de la question et présentation du sujet]
 
-Tu peux t'appuyer sur ces données :
-{...positions extraites des thèmes, résumés, scores...}`
+2. Analyse détaillée
+[Points clés et analyse factuelle]
+- Point 1
+- Point 2
+- Point 3
 
-export async function POST(request: Request) {
+3. Conclusion
+[Synthèse neutre et pédagogique]`
+
+export async function POST(req: Request) {
   try {
-    const { question, theme } = await request.json()
-    console.log('Received request:', { question, theme })
+    const { question } = await req.json()
+    console.log('Question reçue:', question)
 
-    const { data: positions, error } = await supabase
+    // Récupérer les données pertinentes de Supabase
+    const { data: positions, error: positionsError } = await supabase
       .from('positions')
       .select(`
-        id,
-        theme_id,
-        candidate_id,
         content,
         source_url,
-        created_at,
-        candidate:candidates (
-          id,
+        candidates (
           name,
           party
+        ),
+        themes (
+          name
         )
       `)
-      .eq('theme_id', theme)
+      .limit(10)
 
-    if (error) {
-      console.error('Supabase error:', error)
-      return NextResponse.json({ error: error.message }, { status: 500 })
+    if (positionsError) {
+      console.error('Erreur Supabase:', positionsError)
+      throw new Error('Erreur lors de la récupération des données')
     }
 
-    if (!positions) {
-      console.log('No positions found for theme:', theme)
-      return NextResponse.json({ error: 'No positions found' }, { status: 404 })
-    }
+    // Préparer le contexte pour l'IA
+    const context: FormattedPosition[] = (positions as DatabasePosition[])?.map(pos => ({
+      candidat: pos.candidates[0]?.name,
+      parti: pos.candidates[0]?.party,
+      theme: pos.themes[0]?.name,
+      position: pos.content,
+      source: pos.source_url
+    })) || []
 
-    console.log('Found positions:', positions.length)
-
-    // Transform the data to match the Position interface
-    const transformedPositions = positions.map(pos => ({
-      ...pos,
-      candidate: pos.candidate[0]
-    })) as Position[]
-
-    // Create messages array for OpenAI
-    const messages = [
-      { role: 'system', content: SYSTEM_PROMPT },
-      { role: 'user', content: `Question: ${question}\n\nPositions disponibles: ${JSON.stringify(transformedPositions)}` }
-    ]
-
-    console.log('Sending request to OpenAI with messages:', messages)
-
-    // Get response from OpenAI
+    // Générer la réponse avec OpenAI
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4',
-      messages: messages as any,
+      model: "gpt-4",
+      messages: [
+        { role: "system", content: SYSTEM_PROMPT },
+        { role: "user", content: `Question: "${question}"\n\nContexte disponible: ${JSON.stringify(context)}` }
+      ],
       temperature: 0.7,
       max_tokens: 1000
     })
 
-    const response = completion.choices[0]?.message?.content || "Désolé, je n'ai pas pu générer une réponse."
-    console.log('OpenAI response:', response)
+    const response = completion.choices[0]?.message?.content
 
-    return NextResponse.json({ response })
+    if (!response) {
+      throw new Error('Pas de réponse générée')
+    }
+
+    console.log('Réponse générée:', response)
+
+    return NextResponse.json({
+      content: response
+    })
+
   } catch (error) {
-    console.error('Error in /api/ask:', error)
+    console.error('Erreur API:', error)
     return NextResponse.json(
-      { error: "Une erreur s'est produite lors du traitement de votre demande." },
+      { error: 'Une erreur est survenue lors du traitement de votre demande' },
       { status: 500 }
     )
   }
