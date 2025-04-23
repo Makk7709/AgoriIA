@@ -1,7 +1,8 @@
 'use client'
 
 import { motion } from 'framer-motion';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import type { Theme, Position } from '@/lib/types';
@@ -61,54 +62,112 @@ const MOCK_THEMES = {
 interface ThemeContentProps {
   theme: Theme;
   positions: Position[];
+  className?: string;
 }
 
-export function ThemeContent({ theme, positions }: ThemeContentProps) {
-  return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold mb-2">{theme.name}</h1>
-        {theme.description && (
-          <p className="text-gray-600">{theme.description}</p>
-        )}
-      </div>
+export function ThemeContent({ theme, positions, className }: ThemeContentProps) {
+  // Regrouper les positions par candidat et garder la plus récente
+  const latestPositionsByCandidate = positions.reduce((acc, position) => {
+    const existingPosition = acc.get(position.candidate_id);
+    if (!existingPosition || new Date(position.created_at) > new Date(existingPosition.created_at)) {
+      acc.set(position.candidate_id, position);
+    }
+    return acc;
+  }, new Map<string, Position>());
 
-      <div className="space-y-8">
-        {Object.entries(MOCK_THEMES).map(([themeId, themeData]) => (
-          <motion.div
-            key={themeId}
-            className="space-y-4"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="flex items-center space-x-4 bg-gradient-to-r from-[#002654] via-white to-[#ED2939] p-4 rounded-lg shadow-md">
-              <h2 className="text-2xl font-bold text-[#002654]">
-                {themeData.name}
-              </h2>
-              <Badge variant="outline" className="text-sm">
-                {themeData.positions.length} position{themeData.positions.length > 1 ? 's' : ''}
-              </Badge>
-            </div>
-            <div className="grid gap-6">
-              {themeData.positions.map((position) => (
-                <Card key={position.id} className="border-l-4 border-l-[#002654]">
-                  <CardHeader className="bg-gradient-to-r from-blue-50 to-red-50">
-                    <CardTitle className="text-lg flex items-center justify-between">
-                      <span>{position.candidate.name}</span>
-                      <Badge variant="outline" className="ml-2">
-                        {position.candidate.party}
-                      </Badge>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-700">{position.content}</p>
+  // Convertir la Map en array pour l'affichage
+  const uniquePositions = Array.from(latestPositionsByCandidate.values());
+
+  return (
+    <div className={cn('space-y-8', className)}>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8"
+      >
+        <h1 className="text-4xl font-bold font-serif tracking-tight text-[#002654] sm:text-5xl mb-4">
+          {theme.name}
+        </h1>
+        {theme.description && (
+          <p className="mt-2 text-xl text-[#002654]/80 font-serif">
+            {theme.description}
+          </p>
+        )}
+      </motion.div>
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        {uniquePositions.length > 0 ? (
+          <div className="space-y-6">
+            {uniquePositions.map((position, index) => (
+              <motion.div
+                key={position.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <Card className="overflow-hidden bg-white/80 backdrop-blur-sm border-2 border-[#002654]/10 hover:border-[#002654]/30 transition-all">
+                  <CardContent className="p-6">
+                    <div className="flex items-start space-x-4">
+                      <Avatar className="h-12 w-12 border-2 border-[#002654]/10">
+                        <AvatarFallback className="bg-gradient-to-br from-[#002654] to-[#EF4135] text-white">
+                          {position.candidate.name.split(' ').map(n => n[0]).join('')}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <h3 className="text-lg font-semibold text-[#002654] truncate">
+                              {position.candidate.name}
+                            </h3>
+                            <Badge variant="outline" className="bg-[#002654]/5 text-[#002654]">
+                              {position.candidate.party}
+                            </Badge>
+                          </div>
+                        </div>
+                        <p className="mt-4 text-[#002654]/80 text-base leading-relaxed whitespace-pre-wrap">
+                          {position.content}
+                        </p>
+                        {position.source_url && (
+                          <a
+                            href={position.source_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-4 inline-flex items-center text-sm text-[#002654]/60 hover:text-[#002654] transition-colors"
+                          >
+                            Source
+                            <svg
+                              className="ml-1 h-4 w-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                              />
+                            </svg>
+                          </a>
+                        )}
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
-              ))}
-            </div>
+              </motion.div>
+            ))}
+          </div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-12"
+          >
+            <p className="text-xl text-[#002654]/60 font-serif">
+              Aucune position n'a encore été enregistrée pour ce thème.
+            </p>
           </motion.div>
-        ))}
+        )}
       </div>
     </div>
   );

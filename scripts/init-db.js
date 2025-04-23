@@ -72,27 +72,40 @@ async function initDatabase() {
       return;
     }
 
+    // Supprimer TOUS les candidats (y compris les tests)
     const { error: deleteCandidatesError } = await supabase
       .from('candidates')
       .delete()
-      .neq('id', '00000000-0000-0000-0000-000000000000');
+      .not('id', 'is', null); // Supprime tous les candidats
 
     if (deleteCandidatesError) {
       console.error('Erreur lors de la suppression des candidats:', deleteCandidatesError);
       return;
     }
 
-    const { error: deleteThemesError } = await supabase
-      .from('themes')
-      .delete()
-      .neq('id', '');
+    console.log('Anciens candidats supprimés avec succès !');
 
-    if (deleteThemesError) {
-      console.error('Erreur lors de la suppression des thèmes:', deleteThemesError);
+    // Créer uniquement les candidats valides
+    const { data: candidates, error: candidatesError } = await supabase
+      .from('candidates')
+      .upsert([
+        { 
+          name: "Nathalie Arthaud",
+          party: "Lutte Ouvrière"
+        },
+        { 
+          name: "Yannick Jadot",
+          party: "Europe Écologie Les Verts"
+        }
+      ])
+      .select();
+
+    if (candidatesError) {
+      console.error('Erreur lors de la création des candidats:', candidatesError);
       return;
     }
 
-    console.log('Données existantes supprimées avec succès !');
+    console.log('Nouveaux candidats créés avec succès !');
 
     // Insérer les thèmes
     const { error: themesError } = await supabase
@@ -105,22 +118,6 @@ async function initDatabase() {
     }
 
     console.log('Thèmes créés avec succès !');
-
-    // Créer les candidats
-    const { data: candidates, error: candidatesError } = await supabase
-      .from('candidates')
-      .insert([
-        { name: "Candidat A", party: "Parti A" },
-        { name: "Candidat B", party: "Parti B" }
-      ])
-      .select();
-
-    if (candidatesError) {
-      console.error('Erreur lors de la création des candidats:', candidatesError);
-      return;
-    }
-
-    console.log('Candidats créés avec succès !');
 
     // Créer les positions
     const { data: positions, error: positionsError } = await supabase

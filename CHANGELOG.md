@@ -1,5 +1,29 @@
 # Changelog
 
+## [1.1.0] - 2024-04-23
+
+### Added
+- Ajout des positions complètes pour Yannick Jadot et Nathalie Arthaud
+- Nouveau script `scripts/update-themes.js` pour standardiser et vérifier les thèmes
+- Nouveau script `scripts/insert-missing-positions.js` pour l'insertion des positions manquantes
+
+### Changed
+- Standardisation des thèmes avec suppression des doublons (democratie/democratique)
+- Uniformisation des IDs de thèmes
+- Amélioration de la structure des positions avec title et description
+
+### Fixed
+- Correction des positions manquantes pour Jadot et Arthaud
+- Standardisation des thèmes pour éviter les doublons
+- Amélioration de la cohérence des données entre les candidats
+
+## [1.0.0] - 2024-04-22
+
+### Added
+- Première version de la base de données des positions
+- Support initial pour Anne Hidalgo
+- Structure de base des thèmes politiques
+
 ## [Non publié]
 
 ### Ajouté

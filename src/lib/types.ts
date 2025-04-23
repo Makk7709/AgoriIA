@@ -3,8 +3,10 @@ export interface Position {
   theme_id: string
   candidate_id: string
   content: string
-  source_url: string | null
+  source_url?: string | null
   created_at: string
+  title?: string | null
+  description?: string | null
   candidate: {
     id: string
     name: string
@@ -31,7 +33,7 @@ export interface Candidate {
   id: string
   name: string
   party: string
-  bio: string | null
+  bio?: string | null
   created_at: string
 }
 

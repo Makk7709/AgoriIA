@@ -127,6 +127,49 @@ Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
 
 Pour toute question ou suggestion, n'hésitez pas à ouvrir une issue sur GitHub ou à nous contacter directement.
 
+## Scripts de maintenance
+
+### Mise à jour des thèmes
+```bash
+node scripts/update-themes.js
+```
+Ce script permet de :
+- Standardiser les thèmes dans la base de données
+- Supprimer les doublons de thèmes
+- Vérifier la couverture des positions par candidat
+- Générer un rapport sur l'état des positions
+
+### Insertion des positions manquantes
+```bash
+node scripts/insert-missing-positions.js
+```
+Ce script permet de :
+- Insérer les positions manquantes pour les candidats
+- Assurer une couverture complète des thèmes
+- Maintenir la cohérence des données
+
+## Structure des données
+
+### Thèmes
+Les thèmes sont standardisés avec les IDs suivants :
+- `institutions` : Démocratie, institutions, décentralisation, réformes
+- `economie` : Politiques économiques, emploi, croissance, fiscalité
+- `ecologie` : Transition écologique, énergie, biodiversité, climat
+- `social` : Protection sociale, solidarité, logement, culture
+- `education` : École, formation, recherche, jeunesse
+- `sante` : Santé publique, hôpital, prévention, dépendance
+- `securite` : Sécurité intérieure, justice, police, défense
+- `europe` : Union européenne, relations internationales, diplomatie
+
+### Positions
+Chaque position contient :
+- `theme_id` : L'ID du thème concerné
+- `candidate_id` : L'ID du candidat
+- `content` : Le contenu de la position
+- `source_url` : La source de la position (optionnel)
+- `title` : Le titre de la position (optionnel)
+- `description` : Une description courte de la position (optionnel)
+
 ---
 
 Fait avec ❤️ pour la démocratie
