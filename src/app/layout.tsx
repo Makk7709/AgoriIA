@@ -36,8 +36,6 @@ export default function RootLayout({
           name="Korev AI"
           description="Comparez les programmes politiques et analysez les positions des candidats avec l'aide de l'IA."
           url="https://agoria.app"
-          datePublished={new Date().toISOString()}
-          dateModified={new Date().toISOString()}
         />
       </head>
       <body className={inter.className}>
@@ -48,9 +46,9 @@ export default function RootLayout({
               <div className="flex justify-between h-16">
                 <div className="flex items-center">
                   <Link href="/" className="flex items-center group">
-                    <span className="text-2xl font-bold font-serif text-[#002654] relative">
+                    <span className="text-2xl font-bold font-serif text-[#001a3d] relative">
                       Korev AI
-                      <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-[#002654] via-white to-[#EF4135] transform scale-x-0 group-hover:scale-x-100 transition-transform"></span>
+                      <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-[#001a3d] via-white to-[#EF4135] transform scale-x-0 group-hover:scale-x-100 transition-transform"></span>
                     </span>
                   </Link>
                   <div className="hidden sm:ml-8 sm:flex sm:space-x-8">
@@ -80,7 +78,7 @@ export default function RootLayout({
           </main>
 
           <footer className="bg-white border-t border-[#002654]/10">
-            <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 md:flex md:items-center md:justify-between lg:px-8">
+            <div className="max-w-7xl mx-auto py-1 px-4 sm:px-6 md:flex md:items-center md:justify-between lg:px-8">
               <div className="flex justify-center space-x-6 md:order-2">
                 <Link href="/about" className="text-[#002654]/60 hover:text-[#002654] transition-colors font-serif">
                   À propos
@@ -92,7 +90,7 @@ export default function RootLayout({
                   Conditions
                 </Link>
               </div>
-              <div className="mt-8 md:mt-0 md:order-1">
+              <div className="mt-1 md:mt-0 md:order-1">
                 <p className="text-center text-base text-[#002654]/60 font-serif">
                   &copy; {new Date().getFullYear()} Korev AI. Tous droits réservés.
                 </p>

@@ -1,7 +1,7 @@
 import { FC } from 'react';
 
 interface StructuredDataProps {
-  type: 'WebSite' | 'WebPage';
+  type: string;
   name: string;
   description: string;
   url: string;
