@@ -13,65 +13,63 @@ export default function PrivacyPage() {
         type="WebPage"
         name="Politique de confidentialité - AgorIA"
         description="Politique de confidentialité d'AgorIA, l'assistant démocratique intelligent."
-        url="https://www.korev-ai.org/privacy"
+        url="https://agoria.app/privacy"
         datePublished={new Date().toISOString()}
         dateModified={new Date().toISOString()}
       />
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            Politique de confidentialité
+          <h1 className="text-4xl font-bold tracking-tight text-[#002654] font-serif">
+            🔐 Politique de confidentialité
           </h1>
-          <p className="mt-3 max-w-2xl mx-auto text-xl text-gray-500 sm:mt-4">
-            Comment nous protégeons vos données
+          <p className="mt-6 text-xl text-[#002654]/80">
+            Chez <strong>AgorIA</strong>, la protection de vos données est une priorité.
           </p>
         </div>
 
-        <div className="mt-12 prose prose-indigo prose-lg mx-auto">
-          <p>
-            Chez AgorIA, nous accordons une grande importance à la protection de vos données personnelles. Cette politique de confidentialité explique comment nous collectons, utilisons et protégeons vos informations.
-          </p>
-          
-          <h2>Informations que nous collectons</h2>
-          <p>
-            Nous collectons uniquement les informations nécessaires au fonctionnement de l&apos;application :
-          </p>
-          <ul>
-            <li>Vos réponses aux questionnaires sur les thèmes politiques</li>
-            <li>Vos préférences de navigation</li>
-            <li>Des informations techniques (navigateur, appareil, etc.)</li>
-          </ul>
-          
-          <h2>Comment nous utilisons vos informations</h2>
-          <p>
-            Nous utilisons vos informations pour :
-          </p>
-          <ul>
-            <li>Personnaliser votre expérience</li>
-            <li>Améliorer nos services</li>
-            <li>Analyser les tendances d&apos;utilisation</li>
-          </ul>
-          
-          <h2>Protection de vos données</h2>
-          <p>
-            Nous mettons en œuvre des mesures de sécurité techniques et organisationnelles pour protéger vos données contre tout accès non autorisé, perte ou altération.
-          </p>
-          
-          <h2>Vos droits</h2>
-          <p>
-            Conformément au RGPD, vous disposez des droits suivants :
-          </p>
-          <ul>
-            <li>Droit d&apos;accès à vos données</li>
-            <li>Droit de rectification</li>
-            <li>Droit à l&apos;effacement</li>
-            <li>Droit à la portabilité</li>
-          </ul>
-          
-          <h2>Contact</h2>
-          <p>
-            Pour toute question concernant notre politique de confidentialité, contactez-nous à <a href="mailto:contact@korev-ai.com">contact@korev-ai.com</a>.
-          </p>
+        <div className="mt-16 prose prose-lg mx-auto text-[#002654]/80">
+          <section className="mb-12">
+            <p className="mt-4">
+              Nous collectons uniquement les informations strictement nécessaires à l&apos;analyse des préférences citoyennes :
+            </p>
+            <ul className="mt-4 list-disc pl-6">
+              <li>Aucune donnée personnelle nominative (nom, email, adresse...) n&apos;est stockée sans votre consentement explicite.</li>
+              <li>Les réponses à nos questionnaires sont anonymisées et utilisées uniquement à des fins statistiques ou de recommandation personnalisée.</li>
+              <li>Vos interactions avec l&apos;assistant IA sont traitées localement ou via des API sécurisées, sans revente ni exploitation commerciale.</li>
+            </ul>
+          </section>
+
+          <section className="mb-12">
+            <h2 className="text-2xl font-semibold text-[#002654] font-serif flex items-center gap-2">
+              🔒 Hébergement & sécurité
+            </h2>
+            <p className="mt-4">
+              Nos serveurs sont hébergés en Europe (conformité RGPD), avec chiffrement des données en transit et en base.
+            </p>
+            <p className="mt-4">
+              Des audits réguliers sont réalisés pour assurer la sécurité des échanges et la confidentialité des informations.
+            </p>
+          </section>
+
+          <section className="mb-12">
+            <h2 className="text-2xl font-semibold text-[#002654] font-serif flex items-center gap-2">
+              🧾 Vos droits
+            </h2>
+            <p className="mt-4">
+              Conformément à la réglementation en vigueur (RGPD), vous pouvez :
+            </p>
+            <ul className="mt-4 list-disc pl-6">
+              <li>Accéder à vos données</li>
+              <li>Demander leur suppression</li>
+              <li>Modifier vos préférences de confidentialité à tout moment</li>
+            </ul>
+          </section>
+
+          <section className="mb-12">
+            <p className="mt-4">
+              Pour toute demande, contactez-nous à : <a href="mailto:contact@korev-ai.com" className="text-[#002654] hover:text-[#002654]/80 transition-colors duration-200">contact@korev-ai.com</a>
+            </p>
+          </section>
         </div>
       </div>
     </>
