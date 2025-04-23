@@ -14,7 +14,14 @@
     "audit:lighthouse": "lhci autorun",
     "audit:all": "npm run test:a11y && npm run audit:lighthouse",
     "lighthouse": "lhci autorun",
-    "test:lighthouse": "lhci autorun --config=./lighthouserc.js"
+    "test:lighthouse": "lhci autorun --config=./lighthouserc.js",
+    "migrate:db": "node scripts/migrate-db.js",
+    "test:migration": "node scripts/test-migration.js",
+    "create:exec-sql": "node scripts/create-exec-sql-function.js",
+    "check:db": "node scripts/check-db-structure.js",
+    "init:test-data": "node scripts/init-test-data.js",
+    "create:admin": "node scripts/create-admin-user.js",
+    "create:profiles": "node scripts/create-profiles-table.js"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.2",
@@ -24,6 +31,7 @@
     "@radix-ui/react-select": "^2.2.2",
     "@radix-ui/react-slot": "^1.2.0",
     "@radix-ui/react-tooltip": "^1.2.4",
+    "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.49.4",
     "class-variance-authority": "^0.7.1",
