@@ -1,185 +1,88 @@
-# 🗳️ AgorIA
+# AgorIA - Assistant Démocratique Intelligent
 
-Application civic-tech développée par Korev AI qui utilise l'intelligence artificielle pour aider les citoyens à comparer les positions des candidats politiques sur différents thèmes.
+AgorIA est une plateforme d'assistance citoyenne qui utilise l'intelligence artificielle pour aider les citoyens à comprendre et comparer les programmes politiques de manière neutre et objective.
 
-## ⚠️ Propriété intellectuelle
+## 🌟 Remerciements Spéciaux
 
-Ce logiciel est la propriété exclusive de Korev AI SAS. Tous droits réservés.
-- Code source protégé et confidentiel
-- Utilisation soumise à autorisation
-- Voir le fichier `LICENSE` pour les conditions détaillées
+Un remerciement tout particulier à **Lena Gaubert** pour son idée visionnaire et son inspiration dans la création d'AgorIA. Son engagement pour une démocratie plus accessible et transparente a été le catalyseur de ce projet.
 
-## 🎯 Fonctionnalités
+## 🚀 Fonctionnalités
 
-- **Comparaison des positions** : Visualisez et comparez les positions des candidats sur différents thèmes
-- **Analyse IA** : Obtenez une analyse objective des convergences et divergences entre les candidats
-- **Matching citoyen** : Découvrez avec quels candidats vos opinions s'alignent le plus
-- **Sauvegarde des réponses** : Conservez vos réponses pour suivre l'évolution de vos alignements
+- 💬 Interface de chat intuitive pour poser des questions sur les programmes politiques
+- 🤖 Réponses générées par IA basées sur les positions officielles des candidats
+- 📊 Comparaison objective des positions sur différents thèmes
+- 🎯 Suggestions de questions pertinentes
+- 🔍 Analyse neutre et factuelle des programmes
 
 ## 🛠️ Technologies
 
-- **Frontend** : Next.js 15.3.1 avec App Router
-- **UI/UX** : Tailwind CSS + shadcn/ui
-- **Base de données** : Supabase (PostgreSQL)
-- **IA** : OpenAI GPT-4
-- **Authentification** : Supabase Auth (à venir)
-- **Tests** : Jest, Lighthouse CI, Playwright
-- **Accessibilité** : Axe Core, Jest Axe
+- Next.js 14
+- React
+- Tailwind CSS
+- OpenAI GPT-4
+- Supabase
+- TypeScript
 
-## 📦 Structure du projet
+## 🏗️ Installation
 
-```
-src/
-├── app/                    # Pages Next.js (App Router)
-├── components/            
-│   ├── AIAnalysis/        # Analyse IA des positions
-│   ├── ComparisonGrid/    # Grille de comparaison
-│   ├── Scoreboard/        # Tableau des scores d'alignement
-│   └── ui/                # Composants UI réutilisables
-├── lib/
-│   ├── openai/            # Configuration et fonctions OpenAI
-│   ├── supabase/          # Configuration et fonctions Supabase
-│   ├── positions.ts       # Logique de sélection des positions
-│   ├── scoring.ts         # Calcul des scores d'alignement
-│   └── utils.ts           # Utilitaires
-├── tests/                 # Tests unitaires et d'intégration
-└── types/                 # Types TypeScript
-```
-
-## 🚀 Installation
-
-1. Clonez le dépôt :
+1. Cloner le repository :
 ```bash
 git clone https://github.com/Makk7709/AgoriIA.git
 cd AgoriIA
 ```
 
-2. Installez les dépendances :
+2. Installer les dépendances :
 ```bash
 npm install
 ```
 
-3. Configurez les variables d'environnement :
+3. Configurer les variables d'environnement :
 ```bash
 cp .env.example .env.local
 ```
-Puis remplissez les variables dans `.env.local` :
-```
-NEXT_PUBLIC_SUPABASE_URL=votre_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=votre_clé
-OPENAI_API_KEY=votre_clé
-```
+Remplir les variables dans `.env.local` avec vos clés API.
 
-4. Créez la table Supabase :
-```sql
-create table user_responses (
-  id uuid primary key,
-  theme_id text not null,
-  user_id uuid not null,
-  responses jsonb not null,
-  alignment_scores jsonb not null,
-  created_at timestamp with time zone default timezone('utc'::text, now()) not null
-);
-```
-
-5. Lancez le serveur de développement :
+4. Lancer le serveur de développement :
 ```bash
 npm run dev
 ```
 
-## 📝 Documentation technique
+## 📝 Structure du Projet
 
-### Matching citoyen
-
-Le système de matching compare les réponses de l'utilisateur avec les positions des candidats :
-
-- **Sélection des positions** : 3 positions représentatives sont choisies pour le questionnaire
-- **Calcul des scores** :
-  - D'accord ↔ D'accord = +1
-  - Pas d'accord ↔ Pas d'accord = +1
-  - Neutre = 0
-  - Sinon = -1
-- **Sauvegarde** : Les réponses et scores sont stockés dans Supabase (table `user_responses`)
-
-### Analyse IA
-
-L'analyse utilise GPT-4 pour :
-- Résumer objectivement les positions
-- Identifier les points de convergence
-- Repérer les divergences majeures
-- Fournir un score de confiance
-
-## 📄 Licence et Contact
-
-© 2025 Korev AI SAS. Tous droits réservés.
-
-Pour toute demande d'accès, d'utilisation ou de partenariat :
-- Email : contact@korev-ai.com
-- Site web : www.korev-ai.com
-
-## 🙏 Technologies tierces
-
-Ce projet utilise les technologies suivantes sous leurs licences respectives :
-- [shadcn/ui](https://ui.shadcn.com/) - MIT License
-- [Supabase](https://supabase.com/) - Apache 2.0
-- [OpenAI](https://openai.com/) - Usage commercial sous contrat
+```
+agoria/
+├── src/
+│   ├── app/              # Routes et pages Next.js
+│   ├── components/       # Composants React
+│   ├── lib/             # Utilitaires et configurations
+│   └── types/           # Types TypeScript
+├── public/              # Assets statiques
+└── scripts/             # Scripts d'initialisation et de maintenance
+```
 
 ## 🤝 Contribution
 
-Les contributions sont les bienvenues ! Consultez notre [guide de contribution](CONTRIBUTING.md) pour plus de détails.
+Les contributions sont les bienvenues ! N'hésitez pas à :
+1. Fork le projet
+2. Créer une branche pour votre fonctionnalité
+3. Commiter vos changements
+4. Pousser vers la branche
+5. Ouvrir une Pull Request
 
-## 🧪 Tests et Qualité
+## 📄 Licence
 
-Le projet inclut plusieurs niveaux de tests et d'audits :
+Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
 
-### Tests automatisés
-```bash
-# Tests unitaires et d'intégration
-npm run test
+## 🙏 Remerciements
 
-# Tests d'accessibilité
-npm run test:a11y
+- **Lena Gaubert** pour l'idée originale et l'inspiration
+- Tous les contributeurs qui participent à l'amélioration de la démocratie
+- La communauté open source pour les outils et bibliothèques utilisés
 
-# Tests end-to-end
-npm run test:e2e
-```
+## 📞 Contact
 
-### Audit Lighthouse
-```bash
-# Audit complet
-npm run audit:lighthouse
+Pour toute question ou suggestion, n'hésitez pas à ouvrir une issue sur GitHub ou à nous contacter directement.
 
-# Audit avec configuration personnalisée
-npm run test:lighthouse
-```
+---
 
-### Vérification de la qualité
-```bash
-# Linting
-npm run lint
-
-# Vérification des types
-npm run type-check
-```
-
-## 📚 Documentation
-
-- [Guide de contribution](CONTRIBUTING.md)
-- [Documentation des tests](docs/TESTING.md)
-- [Changelog](CHANGELOG.md)
-
-## ✨ Améliorations récentes
-
-- ✅ Configuration complète de Lighthouse CI
-- ✅ Ajout de données structurées JSON-LD
-- ✅ Optimisation du cache navigateur
-- ✅ Amélioration des métadonnées SEO
-- ✅ Tests d'accessibilité automatisés
-
-## 🎯 Prochaines étapes
-
-- [ ] Optimisation des performances
-- [ ] Amélioration de l'accessibilité
-- [ ] Ajout de nouvelles fonctionnalités d'analyse
-- [ ] Intégration de tests end-to-end
-- [ ] Mise en place du monitoring
+Fait avec ❤️ pour la démocratie
