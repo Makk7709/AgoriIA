@@ -1,5 +1,14 @@
-import { supabase } from './config'
+import { createClient } from '@supabase/supabase-js'
 import type { Theme, Position } from '@/lib/types'
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY
+
+if (!supabaseUrl || !supabaseServiceKey) {
+  throw new Error('Missing Supabase environment variables')
+}
+
+const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
 export async function getThemeWithPositions(themeId: string): Promise<{ theme: Theme, positions: Position[] } | null> {
   try {
@@ -25,7 +34,7 @@ export async function getThemeWithPositions(themeId: string): Promise<{ theme: T
         content,
         source_url,
         created_at,
-        candidate:candidates!inner (
+        candidate:candidates (
           id,
           name,
           party
@@ -40,7 +49,12 @@ export async function getThemeWithPositions(themeId: string): Promise<{ theme: T
 
     // Transform the data to match the Position interface
     const transformedPositions = positions?.map(pos => ({
-      ...pos,
+      id: pos.id,
+      theme_id: pos.theme_id,
+      candidate_id: pos.candidate_id,
+      content: pos.content,
+      source_url: pos.source_url,
+      created_at: pos.created_at,
       candidate: Array.isArray(pos.candidate) ? pos.candidate[0] : pos.candidate
     })) || []
 
