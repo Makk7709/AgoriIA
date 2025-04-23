@@ -2,6 +2,50 @@
 
 AgorIA est une plateforme d'assistance citoyenne qui utilise l'intelligence artificielle pour aider les citoyens à comprendre et comparer les programmes politiques de manière neutre et objective.
 
+## 🏛️ À propos d'AgorIA
+
+**AgorIA est un assistant citoyen propulsé par l'intelligence artificielle**, conçu pour permettre à chacun de mieux comprendre les positions politiques, comparer les programmes électoraux et prendre des décisions éclairées.
+
+---
+
+### 🎯 Notre mission
+
+AgorIA est né d'un constat simple : l'information politique est souvent **trop complexe, trop dispersée, ou trop orientée**.
+
+Notre ambition est de **redonner du pouvoir aux citoyens**, en leur offrant un accès simplifié, transparent et neutre aux données politiques majeures :
+
+- Programmes électoraux
+- Positions thématiques des candidats
+- Engagements tenus ou non réalisés
+- Alignement entre les idées des électeurs et des politiques
+
+---
+
+### ⚙️ Comment ça fonctionne ?
+
+AgorIA analyse les programmes politiques à l'aide d'algorithmes de NLP (traitement du langage naturel), puis :
+
+- Classe les promesses par **thème (économie, écologie, éducation, etc.)**
+- Résume et reformule les propositions pour les rendre **plus lisibles**
+- Identifie les écarts entre les discours et les actes (**promesses non tenues**)
+- Propose un **assistant conversationnel neutre** qui répond à vos questions politiques
+
+---
+
+### 💡 Une IA engagée… mais pas engagée politiquement
+
+AgorIA n'est affilié à aucun parti, mouvement ou idéologie.
+
+Notre seule fidélité va à la **transparence démocratique**, à l'**accès à l'information** et à l'**intelligence collective**.
+
+---
+
+### 🤝 Une initiative pour tous
+
+Que vous soyez un **citoyen curieux**, un **étudiant en sciences politiques**, un **journaliste**, un **enseignant** ou simplement **un électeur exigeant**, AgorIA est fait pour vous.
+
+**Reprenons ensemble le pouvoir de comprendre.**
+
 ## 🌟 Remerciements Spéciaux
 
 Un remerciement tout particulier à **Lena Gaubert** pour son idée visionnaire et son inspiration dans la création d'AgorIA. Son engagement pour une démocratie plus accessible et transparente a été le catalyseur de ce projet.
