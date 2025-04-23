@@ -1,43 +1,41 @@
-require('dotenv').config({ path: '.env.test' });
-const { createClient } = require('@supabase/supabase-js');
-const fs = require('fs');
-const path = require('path');
+require('dotenv').config()
+const { createClient } = require('@supabase/supabase-js')
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
 if (!supabaseUrl || !supabaseServiceKey) {
-    console.error('Missing required environment variables SUPABASE_URL or SUPABASE_SERVICE_KEY');
-    process.exit(1);
+    console.error('❌ Variables d\'environnement manquantes')
+    process.exit(1)
 }
 
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
 async function createExecSqlFunction() {
     try {
-        console.log('Reading SQL script...');
-        const sqlScript = fs.readFileSync(
-            path.join(__dirname, 'create-exec-sql-function.sql'),
-            'utf8'
-        );
+        console.log('Création de la fonction exec_sql...')
+        
+        const { error } = await supabase.rpc('exec_sql', {
+            sql: `
+                CREATE OR REPLACE FUNCTION exec_sql(sql TEXT)
+                RETURNS VOID AS $$
+                BEGIN
+                    EXECUTE sql;
+                END;
+                $$ LANGUAGE plpgsql SECURITY DEFINER;
+            `
+        })
 
-        console.log('Creating exec_sql function in Supabase...');
-        const { data, error } = await supabase.rpc('exec_sql', {
-            sql_query: sqlScript
-        });
+        if (error) {
+            console.error('❌ Erreur lors de la création de la fonction:', error)
+            process.exit(1)
+        }
 
-        if (error) throw error;
-
-        console.log('Successfully created exec_sql function!');
-        return data;
+        console.log('✅ Fonction exec_sql créée avec succès')
     } catch (error) {
-        console.error('Error creating exec_sql function:', error.message);
-        throw error;
+        console.error('❌ Erreur inattendue:', error)
+        process.exit(1)
     }
 }
 
-createExecSqlFunction()
-    .catch(error => {
-        console.error('Script failed:', error);
-        process.exit(1);
-    }); 
+createExecSqlFunction() 

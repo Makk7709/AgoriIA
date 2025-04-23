@@ -44,15 +44,17 @@ Pour chaque thème identifié, fournissez :
 5. La source exacte dans le texte
 
 Format de réponse attendu (JSON) :
-[
-  {
-    "theme": "string",
-    "position": "string",
-    "summary": "string",
-    "confidence": number,
-    "source": "string"
-  }
-]
+{
+  "positions": [
+    {
+      "theme": "string",
+      "position": "string",
+      "summary": "string",
+      "confidence": number,
+      "source": "string"
+    }
+  ]
+}
 
 Style : neutre, factuel, civic-tech. Évitez tout parti pris politique.
 `;
@@ -80,8 +82,13 @@ Style : neutre, factuel, civic-tech. Évitez tout parti pris politique.
       throw new Error("Pas de réponse d'OpenAI");
     }
 
-    const positions = JSON.parse(response);
-    return positions.map((pos: any) => ({
+    const parsedResponse = JSON.parse(response);
+    if (!parsedResponse.positions || !Array.isArray(parsedResponse.positions)) {
+      console.error("Format de réponse invalide:", parsedResponse);
+      throw new Error("Format de réponse invalide");
+    }
+
+    return parsedResponse.positions.map((pos: any) => ({
       ...pos,
       candidate,
     }));
@@ -106,16 +113,18 @@ Pour chaque position :
 4. Ajustez le score de confiance
 
 Format de réponse attendu (JSON) :
-[
-  {
-    "theme": "string",
-    "position": "string",
-    "summary": "string",
-    "candidate": "string",
-    "confidence": number,
-    "source": "string"
-  }
-]
+{
+  "positions": [
+    {
+      "theme": "string",
+      "position": "string",
+      "summary": "string",
+      "candidate": "string",
+      "confidence": number,
+      "source": "string"
+    }
+  ]
+}
 `;
 
   const completion = await openai.chat.completions.create({
@@ -141,7 +150,13 @@ Format de réponse attendu (JSON) :
       throw new Error("Pas de réponse d'OpenAI");
     }
 
-    return JSON.parse(response);
+    const parsedResponse = JSON.parse(response);
+    if (!parsedResponse.positions || !Array.isArray(parsedResponse.positions)) {
+      console.error("Format de réponse invalide:", parsedResponse);
+      throw new Error("Format de réponse invalide");
+    }
+
+    return parsedResponse.positions;
   } catch (error) {
     console.error("Erreur lors de la validation des positions:", error);
     return positions;

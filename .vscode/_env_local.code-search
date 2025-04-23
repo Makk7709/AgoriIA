@@ -1,0 +1,6 @@
+# Query: .env.local
+# ContextLines: 1
+
+NEXT_PUBLIC_SUPABASE_URL=https://exbzpsrzfknmcdrhjwrs.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV4Ynpwc3J6ZmtubWNkcmhqd3JzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDUzNDkyNzQsImV4cCI6MjA2MDkyNTI3NH0.VX9TmgdJIZeeoFY0cE5XZeMjxTga1Rvx5bMd4dl-5DM
+

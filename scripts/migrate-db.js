@@ -1,9 +1,8 @@
 const { createClient } = require('@supabase/supabase-js')
-require('dotenv').config({ path: '.env.test' })
+require('dotenv').config()
 
-// Configuration Supabase
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
 if (!supabaseUrl || !supabaseServiceKey) {
   console.error('❌ Variables d\'environnement manquantes')
@@ -16,96 +15,56 @@ async function migrateDatabase() {
   console.log('🚀 Démarrage de la migration de la base de données...')
 
   try {
-    // SQL pour la migration
-    const migrationSQL = `
-      -- Créer ou remplacer la fonction exec_sql
-      CREATE OR REPLACE FUNCTION exec_sql(sql TEXT)
-      RETURNS VOID AS $$
-      BEGIN
-        EXECUTE sql;
-      END;
-      $$ LANGUAGE plpgsql SECURITY DEFINER;
-
-      -- Extension nécessaire pour les UUID
-      CREATE EXTENSION IF NOT EXISTS "pgcrypto";
-
-      -- Table des thèmes
-      CREATE TABLE IF NOT EXISTS public.themes (
-        id TEXT PRIMARY KEY,
-        name TEXT NOT NULL,
-        description TEXT,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()) NOT NULL
-      );
-
-      -- Table des positions
-      CREATE TABLE IF NOT EXISTS public.positions (
-        id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-        theme_id TEXT REFERENCES public.themes(id) ON DELETE CASCADE,
-        title TEXT NOT NULL,
-        description TEXT,
-        source_url TEXT,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()) NOT NULL
-      );
-
-      -- Table des candidats
-      CREATE TABLE IF NOT EXISTS public.candidates (
-        id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-        name TEXT NOT NULL,
-        party TEXT,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()) NOT NULL
-      );
-
-      -- Table des positions des candidats
-      CREATE TABLE IF NOT EXISTS public.candidate_positions (
-        id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-        position_id UUID REFERENCES public.positions(id) ON DELETE CASCADE,
-        candidate_id UUID REFERENCES public.candidates(id) ON DELETE CASCADE,
-        position TEXT NOT NULL CHECK (position IN ('agree', 'disagree', 'neutral')),
-        explanation TEXT,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()) NOT NULL
-      );
-
-      -- Table des programmes
-      CREATE TABLE IF NOT EXISTS public.programs (
-        id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-        title TEXT NOT NULL,
-        description TEXT,
-        pdf_url TEXT,
-        theme_id TEXT REFERENCES public.themes(id) ON DELETE CASCADE,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()) NOT NULL
-      );
-    `
-
-    // Exécuter la migration
-    console.log('📝 Exécution des commandes SQL de migration...')
-    const { error: migrationError } = await supabase.rpc('exec_sql', {
-      sql_query: migrationSQL
+    // Vérification de la colonne created_at
+    console.log('📝 Vérification de la colonne created_at...')
+    await supabase.rpc('exec_sql', {
+      sql: `
+        ALTER TABLE candidates 
+        ALTER COLUMN created_at SET DEFAULT timezone('utc'::text, now());
+      `
     })
 
-    if (migrationError) {
-      console.error('❌ Erreur lors de la migration:', migrationError)
-      return false
-    }
+    // Activation de RLS et création des politiques
+    console.log('📝 Configuration des politiques RLS...')
+    await supabase.rpc('exec_sql', {
+      sql: `
+        -- Activation de RLS
+        ALTER TABLE candidates ENABLE ROW LEVEL SECURITY;
 
-    console.log('✅ Migration terminée avec succès!')
-    return true
+        -- Suppression des anciennes politiques si elles existent
+        DROP POLICY IF EXISTS "Allow insert to anon" ON candidates;
+        DROP POLICY IF EXISTS "Allow select to all" ON candidates;
+        DROP POLICY IF EXISTS "Allow update to authenticated" ON candidates;
+        DROP POLICY IF EXISTS "Allow delete to authenticated" ON candidates;
+
+        -- Création des nouvelles politiques
+        CREATE POLICY "Allow insert to anon" ON candidates 
+          FOR INSERT 
+          TO anon, authenticated 
+          WITH CHECK (true);
+
+        CREATE POLICY "Allow select to all" ON candidates 
+          FOR SELECT 
+          TO anon, authenticated 
+          USING (true);
+
+        CREATE POLICY "Allow update to authenticated" ON candidates 
+          FOR UPDATE 
+          TO authenticated 
+          USING (true);
+
+        CREATE POLICY "Allow delete to authenticated" ON candidates 
+          FOR DELETE 
+          TO authenticated 
+          USING (true);
+      `
+    })
+
+    console.log('✅ Migration terminée avec succès')
   } catch (error) {
-    console.error('❌ Erreur inattendue:', error)
-    return false
+    console.error('❌ Erreur lors de la migration:', error)
+    process.exit(1)
   }
 }
 
-migrateDatabase()
-  .then(success => {
-    if (success) {
-      console.log('✨ Migration terminée avec succès!')
-      process.exit(0)
-    } else {
-      console.error('❌ La migration a échoué')
-      process.exit(1)
-    }
-  })
-  .catch(error => {
-    console.error('❌ Erreur inattendue:', error)
-    process.exit(1)
-  }) 
+migrateDatabase() 

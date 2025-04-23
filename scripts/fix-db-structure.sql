@@ -56,6 +56,15 @@ INSERT INTO candidates (id, name, party, created_at)
 SELECT id, name, party, created_at
 FROM candidates_backup;
 
+-- Activation de RLS
+ALTER TABLE candidates ENABLE ROW LEVEL SECURITY;
+
+-- Création des politiques RLS
+CREATE POLICY "Allow insert to authenticated" ON candidates FOR INSERT TO authenticated USING (true);
+CREATE POLICY "Allow select to all" ON candidates FOR SELECT USING (true);
+CREATE POLICY "Allow update to authenticated" ON candidates FOR UPDATE TO authenticated USING (true);
+CREATE POLICY "Allow delete to authenticated" ON candidates FOR DELETE TO authenticated USING (true);
+
 INSERT INTO positions (
     id,
     theme_id,

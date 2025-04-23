@@ -83,8 +83,9 @@ export const metadata: Metadata = {
 };
 
 export default async function ComparePage({ searchParams }: Props) {
-  const theme = searchParams.theme as string | undefined
-  const candidates = searchParams.candidates as string | undefined
+  const params = await searchParams
+  const theme = params.theme as string | undefined
+  const candidates = params.candidates as string | undefined
 
   const { themes, candidates: allCandidates } = await getThemesAndCandidates()
   

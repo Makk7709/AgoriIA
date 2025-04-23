@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase/config'
+import { createClient } from '@supabase/supabase-js';
 import Link from 'next/link'
 import { ArrowRightIcon } from '@heroicons/react/24/outline'
 import { Metadata } from 'next'
@@ -12,17 +12,27 @@ interface Theme {
 }
 
 async function getThemes() {
-  const { data, error } = await supabase
+  console.log('Fetching themes...');
+  
+  // Créer un client Supabase avec le rôle de service
+  const supabaseAdmin = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+    process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+  );
+  
+  // Récupérer tous les thèmes
+  const { data: themes, error: themesError } = await supabaseAdmin
     .from('themes')
     .select('*')
-    .order('name')
+    .order('name');
 
-  if (error) {
-    console.error('Error fetching themes:', error)
-    return []
+  if (themesError) {
+    console.error('Error fetching themes:', themesError);
+    return [];
   }
 
-  return data as Theme[]
+  console.log('All themes:', themes);
+  return themes as Theme[];
 }
 
 export const metadata: Metadata = {
@@ -43,7 +53,8 @@ export const metadata: Metadata = {
 }
 
 export default async function ThemesPage() {
-  const themes = await getThemes()
+  const themes = await getThemes();
+  console.log('Themes to render:', themes);
 
   return (
     <>
@@ -66,37 +77,40 @@ export default async function ThemesPage() {
         </div>
 
         <div className="mt-16 grid gap-6 max-w-lg mx-auto lg:grid-cols-3 lg:max-w-none">
-          {themes.length > 0 ? (
-            themes.map((theme) => (
-              <div
-                key={theme.id}
-                className="flex flex-col rounded-xl shadow-lg overflow-hidden bg-white/80 backdrop-blur-sm border-2 border-[#002654]/10 hover:border-[#002654]/30 transition-all group"
-              >
-                <div className="flex-1 p-8 flex flex-col justify-between">
-                  <div className="flex-1">
-                    <Link href={`/themes/${theme.id}`} className="block">
-                      <p className="text-2xl font-semibold font-serif text-[#002654] group-hover:text-[#002654] transition-colors">
-                        {theme.name}
-                      </p>
-                      {theme.description && (
-                        <p className="mt-4 text-lg text-[#002654]/70 font-serif">
-                          {theme.description}
+          {themes && themes.length > 0 ? (
+            themes.map((theme) => {
+              console.log('Rendering theme:', theme);
+              return (
+                <div
+                  key={theme.id}
+                  className="flex flex-col rounded-xl shadow-lg overflow-hidden bg-white/80 backdrop-blur-sm border-2 border-[#002654]/10 hover:border-[#002654]/30 transition-all group"
+                >
+                  <div className="flex-1 p-8 flex flex-col justify-between">
+                    <div className="flex-1">
+                      <Link href={`/themes/${theme.id}`} className="block">
+                        <p className="text-2xl font-semibold font-serif text-[#002654] group-hover:text-[#002654] transition-colors">
+                          {theme.name}
                         </p>
-                      )}
-                    </Link>
-                  </div>
-                  <div className="mt-8">
-                    <Link
-                      href={`/themes/${theme.id}`}
-                      className="inline-flex items-center px-6 py-3 text-base font-medium font-serif rounded-xl shadow-md text-white bg-gradient-to-r from-[#002654] to-[#EF4135] hover:from-[#001b3b] hover:to-[#d93a2f] transition-all"
-                    >
-                      Explorer
-                      <ArrowRightIcon className="ml-2 -mr-1 h-5 w-5" aria-hidden="true" />
-                    </Link>
+                        {theme.description && (
+                          <p className="mt-4 text-lg text-[#002654]/70 font-serif">
+                            {theme.description}
+                          </p>
+                        )}
+                      </Link>
+                    </div>
+                    <div className="mt-8">
+                      <Link
+                        href={`/themes/${theme.id}`}
+                        className="inline-flex items-center px-6 py-3 text-base font-medium font-serif rounded-xl shadow-md text-white bg-gradient-to-r from-[#002654] to-[#EF4135] hover:from-[#001b3b] hover:to-[#d93a2f] transition-all"
+                      >
+                        Explorer
+                        <ArrowRightIcon className="ml-2 -mr-1 h-5 w-5" aria-hidden="true" />
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           ) : (
             <div className="text-center col-span-3">
               <p className="text-xl text-[#002654]/60 font-serif">Aucun thème disponible pour le moment.</p>
@@ -105,5 +119,5 @@ export default async function ThemesPage() {
         </div>
       </div>
     </>
-  )
+  );
 } 

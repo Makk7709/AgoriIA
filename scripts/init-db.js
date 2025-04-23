@@ -8,17 +8,17 @@ const supabase = createClient(
 
 const themes = [
   {
-    id: "economy",
+    id: "economie",
     name: "Économie",
     description: "Politiques économiques, emploi, croissance, fiscalité",
   },
   {
-    id: "ecology",
+    id: "ecologie",
     name: "Écologie",
     description: "Transition écologique, énergie, biodiversité, climat",
   },
   {
-    id: "security",
+    id: "securite",
     name: "Sécurité",
     description: "Sécurité intérieure, justice, police, défense",
   },
@@ -28,7 +28,7 @@ const themes = [
     description: "École, formation, recherche, jeunesse",
   },
   {
-    id: "health",
+    id: "sante",
     name: "Santé",
     description: "Santé publique, hôpital, prévention, dépendance",
   },
@@ -127,12 +127,12 @@ async function initDatabase() {
       .from('positions')
       .insert([
         {
-          theme_id: "economy",
+          theme_id: "economie",
           title: "Réduction du temps de travail",
           description: "Proposition de réduire la semaine de travail à 32 heures."
         },
         {
-          theme_id: "economy",
+          theme_id: "economie",
           title: "Revenu universel",
           description: "Mise en place d'un revenu universel pour tous les citoyens."
         }
