@@ -2,6 +2,8 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { ChatPanel } from '@/components/ChatPanel'
 import { act } from 'react'
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import { config } from '@/lib/config'
+import { mockSupabaseClient } from '@/test/mocks/supabase'
 
 // Mock des dépendances
 vi.mock('@/components/ClientOnly', () => ({
@@ -62,6 +64,11 @@ describe('ChatPanel', () => {
 
     const mockUUID = vi.fn(() => 'test-uuid')
     vi.stubGlobal('crypto', { randomUUID: mockUUID })
+
+    mockSupabaseClient.clearMockData()
+    mockSupabaseClient.setMockData('ma_table', [
+      { id: 1, nom: 'Test' }
+    ])
   })
 
   afterEach(() => {
@@ -102,4 +109,17 @@ describe('ChatPanel', () => {
     // Vérifier que le message est affiché
     expect(screen.getByText('Test response')).toBeInTheDocument()
   })
-}) 
+
+  it('devrait récupérer les données', async () => {
+    const result = await mockSupabaseClient
+      .from('ma_table')
+      .select()
+      .then()
+    
+    expect(result.data).toHaveLength(1)
+  })
+})
+
+// Example usage:
+const url = config.supabase.url
+const openaiApiKey = config.openai.apiKey; 

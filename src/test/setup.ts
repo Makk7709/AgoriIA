@@ -2,6 +2,29 @@ import '@testing-library/jest-dom'
 import { expect, afterEach, vi } from 'vitest'
 import { cleanup } from '@testing-library/react'
 import * as matchers from '@testing-library/jest-dom/matchers'
+import { config } from 'dotenv'
+import { resolve } from 'path'
+
+// Load environment variables from .env.test
+config({ path: resolve(__dirname, '../../.env.test') })
+
+// Define required environment variables
+const requiredEnvVars = [
+  'NEXT_PUBLIC_SUPABASE_URL',
+  'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+  'SUPABASE_SERVICE_ROLE_KEY',
+  'PINECONE_API_KEY',
+  'PINECONE_ENVIRONMENT',
+  'PINECONE_INDEX',
+  'OPENAI_API_KEY',
+]
+
+// Validate required environment variables
+requiredEnvVars.forEach(varName => {
+  if (!process.env[varName]) {
+    throw new Error(`Missing required environment variable: ${varName}`)
+  }
+})
 
 // Étend les matchers de Vitest avec ceux de jest-dom
 expect.extend(matchers)

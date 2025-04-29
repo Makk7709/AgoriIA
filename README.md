@@ -4,6 +4,17 @@
 
 AgorIA est une plateforme d'analyse politique qui permet de comparer les positions des candidats sur différents thèmes. La plateforme utilise l'intelligence artificielle pour analyser et présenter les informations de manière claire et accessible.
 
+## Version MVP 1.1
+
+La version MVP 1.1 apporte les améliorations suivantes :
+- 🚀 Interface utilisateur optimisée et responsive
+- 🔍 Système de recherche vectorielle amélioré
+- 🎯 Suggestions de questions contextuelles
+- 🔒 Système d'authentification robuste
+- 📱 Support PWA (Progressive Web App)
+- 🧪 Tests unitaires et d'intégration
+- 🛠️ Optimisation des performances
+
 ## Fonctionnalités Principales
 
 - 🔍 Analyse des positions politiques
@@ -22,8 +33,9 @@ AgorIA est une plateforme d'analyse politique qui permet de comparer les positio
 - **Base de données**: Supabase (PostgreSQL)
 - **Authentification**: Supabase Auth
 - **Validation**: Zod
-- **Tests**: Jest, Vitest, Testing Library
+- **Tests**: Vitest, Testing Library
 - **Recherche Vectorielle**: Pinecone
+- **PWA**: Service Workers, Manifest
 
 ### Fonctionnalités Avancées
 
@@ -75,6 +87,7 @@ npm run dev
 - `npm run type-check` : Vérifie les types TypeScript
 - `npm run security:check` : Vérifie les vulnérabilités
 - `npm run security:fix` : Corrige les vulnérabilités
+- `npm run lighthouse` : Analyse les performances
 
 ## Structure du Projet
 
@@ -84,7 +97,9 @@ agoria/
 │   ├── app/              # Routes et pages Next.js
 │   ├── components/       # Composants React
 │   ├── lib/             # Utilitaires et configurations
-│   └── tests/           # Tests
+│   ├── hooks/           # Hooks personnalisés
+│   ├── types/           # Types TypeScript
+│   └── test/            # Tests
 ├── public/              # Assets statiques
 ├── archives/            # Documentation et rapports
 └── scripts/             # Scripts utilitaires
@@ -93,6 +108,7 @@ agoria/
 ## Documentation
 
 - [Rapport de Sécurité](archives/security_check_agoria.md)
+- [Rapport UX](archives/ux_check_agoria.md)
 - [Guide d'Installation](docs/installation.md)
 - [Guide de Contribution](docs/contributing.md)
 
@@ -109,4 +125,4 @@ Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de 
 Pour toute question ou suggestion, n'hésitez pas à ouvrir une issue sur GitHub.
 
 ---
-*Développé avec ❤️ par l'équipe AgorIA*
+*Développé avec ❤️ par l'équipe AgorIA - Version MVP 1.1*
