@@ -16,7 +16,7 @@ interface Props {
 }
 
 export default async function ThemeProgramsPage({ params }: Props) {
-  const supabase = createSupabaseServerClient()
+  const supabase = await createSupabaseServerClient()
   
   // Vérifier si l'utilisateur est connecté et a les droits d'admin
   const { data: { session } } = await supabase.auth.getSession()

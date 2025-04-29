@@ -9,21 +9,23 @@ export const metadata: Metadata = {
 }
 
 interface LoginPageProps {
-  searchParams?: { redirect?: string }
+  searchParams: {
+    redirect?: string
+  }
 }
 
 export default async function LoginPage({
   searchParams,
 }: LoginPageProps) {
   // Création du client Supabase (synchrone car cookies() est synchrone)
-  const supabase = createSupabaseServerClient()
+  const supabase = await createSupabaseServerClient()
 
   // Vérification sécurisée de l'utilisateur avec await du client
-  const { data: { user } } = await (await supabase).auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser()
 
   // Si l'utilisateur est connecté, on vérifie son rôle et on redirige
   if (user) {
-    const { data: profile } = await (await supabase)
+    const { data: profile } = await supabase
       .from('profiles')
       .select('role')
       .eq('id', user.id)

@@ -6,14 +6,14 @@ import type { Session } from '@supabase/supabase-js'
 
 // Mock de Supabase
 vi.mock('@supabase/ssr', () => ({
-  createBrowserClient: vi.fn(() => ({
+  createBrowserClient: vi.fn((supabaseUrl: string, supabaseKey: string) => ({
     auth: {
-      getSession: vi.fn()
+      getSession: vi.fn((options?: { refreshSession?: boolean }) => Promise.resolve({ data: { session: null }, error: null }))
     },
-    from: vi.fn(() => ({
-      select: vi.fn(() => ({
-        eq: vi.fn(() => ({
-          single: vi.fn()
+    from: vi.fn((table: string) => ({
+      select: vi.fn((columns: string) => ({
+        eq: vi.fn((column: string, value: any) => ({
+          single: vi.fn(() => Promise.resolve({ data: null, error: null }))
         }))
       }))
     }))
@@ -29,7 +29,7 @@ describe('AdminButton', () => {
 
   // Test 2: Le bouton ne doit pas être affiché si l'utilisateur n'est pas connecté
   it('ne doit pas afficher le bouton si l\'utilisateur n\'est pas connecté', async () => {
-    const mockSupabase = createBrowserClient()
+    const mockSupabase = createBrowserClient('https://example.supabase.co', 'anon-key')
     ;(mockSupabase.auth.getSession as any).mockResolvedValue({ data: { session: null } })
 
     render(<AdminButton />)
@@ -40,7 +40,7 @@ describe('AdminButton', () => {
 
   // Test 3: Le bouton ne doit pas être affiché si l'utilisateur n'est pas admin
   it('ne doit pas afficher le bouton si l\'utilisateur n\'est pas admin', async () => {
-    const mockSupabase = createBrowserClient()
+    const mockSupabase = createBrowserClient('https://example.supabase.co', 'anon-key')
     ;(mockSupabase.auth.getSession as any).mockResolvedValue({
       data: {
         session: {
@@ -48,7 +48,7 @@ describe('AdminButton', () => {
         } as Session
       }
     })
-    ;(mockSupabase.from().select().eq().single as any).mockResolvedValue({
+    ;(mockSupabase.from('profiles').select('role').eq('id', '123').single as any).mockResolvedValue({
       data: { role: 'user' },
       error: null
     })
@@ -61,7 +61,7 @@ describe('AdminButton', () => {
 
   // Test 4: Le bouton doit être affiché si l'utilisateur est admin
   it('doit afficher le bouton si l\'utilisateur est admin', async () => {
-    const mockSupabase = createBrowserClient()
+    const mockSupabase = createBrowserClient('https://example.supabase.co', 'anon-key')
     ;(mockSupabase.auth.getSession as any).mockResolvedValue({
       data: {
         session: {
@@ -69,7 +69,7 @@ describe('AdminButton', () => {
         } as Session
       }
     })
-    ;(mockSupabase.from().select().eq().single as any).mockResolvedValue({
+    ;(mockSupabase.from('profiles').select('role').eq('id', '123').single as any).mockResolvedValue({
       data: { role: 'admin' },
       error: null
     })
@@ -85,7 +85,7 @@ describe('AdminButton', () => {
 
   // Test 5: Le bouton doit avoir le bon style
   it('doit avoir le bon style', async () => {
-    const mockSupabase = createBrowserClient()
+    const mockSupabase = createBrowserClient('https://example.supabase.co', 'anon-key')
     ;(mockSupabase.auth.getSession as any).mockResolvedValue({
       data: {
         session: {
@@ -93,7 +93,7 @@ describe('AdminButton', () => {
         } as Session
       }
     })
-    ;(mockSupabase.from().select().eq().single as any).mockResolvedValue({
+    ;(mockSupabase.from('profiles').select('role').eq('id', '123').single as any).mockResolvedValue({
       data: { role: 'admin' },
       error: null
     })
@@ -114,7 +114,7 @@ describe('AdminButton', () => {
 
   // Test 6: Le bouton doit gérer les erreurs de manière appropriée
   it('doit gérer les erreurs de manière appropriée', async () => {
-    const mockSupabase = createBrowserClient()
+    const mockSupabase = createBrowserClient('https://example.supabase.co', 'anon-key')
     ;(mockSupabase.auth.getSession as any).mockRejectedValue(new Error('Erreur de connexion'))
 
     const consoleSpy = vi.spyOn(console, 'error')
@@ -133,7 +133,7 @@ describe('AdminButton', () => {
 
   // Test 7: Le bouton doit se mettre à jour si le statut admin change
   it('doit se mettre à jour si le statut admin change', async () => {
-    const mockSupabase = createBrowserClient()
+    const mockSupabase = createBrowserClient('https://example.supabase.co', 'anon-key')
     let isAdmin = false
 
     ;(mockSupabase.auth.getSession as any).mockResolvedValue({
@@ -143,7 +143,7 @@ describe('AdminButton', () => {
         } as Session
       }
     })
-    ;(mockSupabase.from().select().eq().single as any).mockImplementation(() => {
+    ;(mockSupabase.from('profiles').select('role').eq('id', '123').single as any).mockImplementation(() => {
       return Promise.resolve({
         data: { role: isAdmin ? 'admin' : 'user' },
         error: null
