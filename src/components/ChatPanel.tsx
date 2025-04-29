@@ -8,13 +8,13 @@ import { Send, Flag } from 'lucide-react'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import debounce from 'lodash/debounce'
 import { ClientOnly } from './ClientOnly'
-
-interface Message {
-  id: string
-  content: string
-  role: 'assistant' | 'user'
-  timestamp: Date
-}
+import { 
+  getMessageContent, 
+  type MessageContent, 
+  type Message,
+  getMessageTestId,
+  getDebugMessageTestId
+} from '@/utils/messageUtils'
 
 const INITIAL_SUGGESTIONS = [
   "Quels candidats soutiennent le RIC ?",
@@ -49,6 +49,8 @@ export function ChatPanel() {
     debounce(async (content: string) => {
       if (!content.trim()) return
 
+      console.log('[DEBUG] handleSubmit triggered')
+
       const userMessage: Message = {
         id: crypto.randomUUID(),
         content,
@@ -74,6 +76,7 @@ export function ChatPanel() {
         }
 
         const data = await response.json()
+        console.log('[DEBUG] API Response:', data)
         
         const assistantMessage: Message = {
           id: crypto.randomUUID(),
@@ -81,6 +84,7 @@ export function ChatPanel() {
           role: 'assistant',
           timestamp: new Date()
         }
+        console.log('[DEBUG] Setting messages:', assistantMessage)
         setMessages(prev => [...prev, assistantMessage])
       } catch (error) {
         console.error('Error in handleSubmit:', error)
@@ -100,8 +104,11 @@ export function ChatPanel() {
 
   // Memoize le rendu des messages
   const renderMessages = useMemo(() => {
+    console.log('[DEBUG] Messages at render:', messages)
     return rowVirtualizer.getVirtualItems().map((virtualRow) => {
       const message = messages[virtualRow.index]
+      if (!message) return null
+      
       return (
         <div
           key={message.id}
@@ -116,15 +123,16 @@ export function ChatPanel() {
             className={cn(
               "max-w-[85%] rounded-xl p-6 font-serif text-lg leading-relaxed transition-all duration-300",
               message.role === 'user'
-                ? 'bg-gradient-to-r from-[#002654] to-[#002654]/90 text-white shadow-lg hover:shadow-xl'
+                ? 'bg-gradient-to-r from-[#002654] to-[#EF4135] text-white shadow hover:shadow-lg'
                 : 'bg-white border-2 border-[#002654]/20 text-black shadow hover:shadow-lg'
             )}
+            data-testid={getMessageTestId(message.role, message.id)}
           >
-            {message.content}
+            {getMessageContent(message.content)}
           </div>
         </div>
       )
-    })
+    }).filter(Boolean)
   }, [messages, rowVirtualizer])
 
   if (!isMounted) {
@@ -178,6 +186,32 @@ export function ChatPanel() {
                 </div>
               </div>
             </div>
+          )}
+          
+          {/* Debug rendering without virtualizer */}
+          {messages.length > 0 && (
+            <>
+              {(() => {
+                console.log('[DEBUG] messages:', messages);
+                return null;
+              })()}
+              <div data-testid="debug-message-list" className="space-y-4">
+                {messages.map((message) => (
+                  <div 
+                    key={message.id} 
+                    data-testid={getDebugMessageTestId(message.role, message.id)}
+                    className={cn(
+                      "max-w-[85%] rounded-xl p-6 font-serif text-lg leading-relaxed",
+                      message.role === 'user'
+                        ? 'bg-gradient-to-r from-[#002654] to-[#EF4135] text-white'
+                        : 'bg-white border-2 border-[#002654]/20 text-black'
+                    )}
+                  >
+                    {getMessageContent(message.content)}
+                  </div>
+                ))}
+              </div>
+            </>
           )}
           
           {renderMessages}

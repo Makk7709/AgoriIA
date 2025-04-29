@@ -1,63 +1,44 @@
 'use client'
 
 import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
 import { ChatResponse } from '@/components/chat/ChatResponse'
 import { formatChatResponse } from '@/lib/utils/formatChatResponse'
+import { type ChatResponseContent } from '@/utils/messageUtils'
 import { StructuredData } from '@/components/StructuredData'
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline'
 
 export default function Home() {
   const [question, setQuestion] = useState('')
-  const [response, setResponse] = useState<any>(null)
-  const [loading, setLoading] = useState(false)
+  const [response, setResponse] = useState<ChatResponseContent | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!question.trim()) return
 
-    setLoading(true)
+    setIsLoading(true)
     setError(null)
-    setResponse(null)
-
     try {
-      console.log('Sending request with question:', question.trim())
-
       const res = await fetch('/api/ask', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          question: question.trim(),
-          theme: 'general'
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question: question.trim() })
       })
 
-      if (!res.ok) {
-        throw new Error(`Erreur serveur: ${res.status}`)
-      }
+      if (!res.ok) throw new Error('Failed to get response')
 
       const data = await res.json()
-      console.log('Raw API response:', data)
-
-      if (!data || !data.content) {
-        throw new Error('Réponse invalide du serveur')
-      }
-
       const formattedResponse = formatChatResponse(data)
-      console.log('Formatted response:', formattedResponse)
-
-      if (!formattedResponse.introduction || !formattedResponse.analysis || !formattedResponse.conclusion) {
-        throw new Error('La réponse formatée est incomplète')
-      }
-
       setResponse(formattedResponse)
     } catch (error) {
-      console.error('Error in handleSubmit:', error)
+      console.error('Error:', error)
       setError(error instanceof Error ? error.message : 'Une erreur est survenue')
+      setResponse(null)
     } finally {
-      setLoading(false)
+      setIsLoading(false)
     }
   }
 
@@ -104,12 +85,12 @@ export default function Home() {
                 />
                 <button
                   type="submit"
-                  disabled={loading || !question.trim()}
+                  disabled={isLoading || !question.trim()}
                   className="absolute right-3 top-3 p-4 rounded-lg bg-gradient-to-r from-[#002654] via-white to-[#EF4135] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-105 group shadow-md hover:shadow-lg"
-                  aria-label={loading ? 'Analyse en cours...' : 'Envoyer la question'}
+                  aria-label={isLoading ? 'Analyse en cours...' : 'Envoyer la question'}
                 >
                   <PaperAirplaneIcon 
-                    className={`h-7 w-7 text-[#002654] drop-shadow-sm transform -rotate-45 transition-transform duration-200 ${loading ? 'animate-pulse' : 'group-hover:translate-x-0.5 group-hover:-translate-y-0.5'}`}
+                    className={`h-7 w-7 text-[#002654] drop-shadow-sm transform -rotate-45 transition-transform duration-200 ${isLoading ? 'animate-pulse' : 'group-hover:translate-x-0.5 group-hover:-translate-y-0.5'}`}
                   />
                 </button>
               </div>

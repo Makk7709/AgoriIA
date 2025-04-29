@@ -1,9 +1,20 @@
-import { render, screen, fireEvent } from '@testing-library/react'
-import { ChatPanel } from '@/components/ChatPanel'
-import { act } from 'react'
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { config } from '@/lib/config'
+import { vi } from 'vitest'
 import { mockSupabaseClient } from '@/test/mocks/supabase'
+
+// 👇 MOCK AVANT TOUT
+vi.mock('@/lib/supabase', () => ({
+  supabase: mockSupabaseClient,
+}))
+
+// 👇 MAINTENANT import du composant
+import { ChatPanel } from '@/components/ChatPanel'
+
+import React from 'react'
+import { render, screen, fireEvent } from '@testing-library/react'
+import { act } from 'react'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
+import { config } from '@/lib/config'
+import '@testing-library/jest-dom'
 
 // Mock des dépendances
 vi.mock('@/components/ClientOnly', () => ({
@@ -42,33 +53,44 @@ vi.mock('@tanstack/react-virtual', () => ({
   }),
 }))
 
+// Mock de fetch
+global.fetch = vi.fn(() =>
+  Promise.resolve({
+    ok: true,
+    status: 200,
+    json: () => Promise.resolve({ data: 'ok' }),
+    headers: new Headers(),
+    redirected: false,
+    statusText: 'OK',
+    type: 'basic',
+    url: '',
+    clone: () => new Response(),
+    text: () => Promise.resolve(''),
+    blob: () => Promise.resolve(new Blob()),
+    arrayBuffer: () => Promise.resolve(new ArrayBuffer(0)),
+    formData: () => Promise.resolve(new FormData()),
+  } as Response)
+)
+
 describe('ChatPanel', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.useFakeTimers()
     mockMessages = []
 
-    global.fetch = vi.fn().mockImplementation(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({
-          response: {
-            role: 'assistant',
-            content: 'Test response',
-            id: 'test-response-id'
-          },
-          suggestions: ['Quels candidats soutiennent le RIC ?'],
-        }),
-      })
-    )
+    // Mock des messages Supabase
+    mockSupabaseClient.clearMockData()
+    mockSupabaseClient.setMockData('messages', [
+      { 
+        id: '1',
+        role: 'assistant',
+        content: 'Bienvenue sur AgorIA',
+        timestamp: new Date().toISOString()
+      }
+    ])
 
     const mockUUID = vi.fn(() => 'test-uuid')
     vi.stubGlobal('crypto', { randomUUID: mockUUID })
-
-    mockSupabaseClient.clearMockData()
-    mockSupabaseClient.setMockData('ma_table', [
-      { id: 1, nom: 'Test' }
-    ])
   })
 
   afterEach(() => {
@@ -79,17 +101,20 @@ describe('ChatPanel', () => {
     mockMessages = []
   })
 
-  it('should render initial state correctly', () => {
+  it('should render initial state correctly', async () => {
     render(<ChatPanel />)
-    expect(screen.getByText('Bienvenue sur AgorIA')).toBeInTheDocument()
+    
+    const welcomeMessage = await screen.findByText('Bienvenue sur AgorIA')
+    expect(welcomeMessage).toBeInTheDocument()
   })
 
   it('should handle user input and API response', async () => {
     render(<ChatPanel />)
+
     const input = screen.getByPlaceholderText('Posez votre question sur les programmes...')
     const form = input.closest('form')!
 
-    // Simuler l'ajout du message avant la soumission pour éviter les délais
+    // Simuler l'ajout du message avant la soumission
     mockMessages = [{
       id: 'test-uuid',
       content: 'Test response',
@@ -97,29 +122,22 @@ describe('ChatPanel', () => {
       timestamp: new Date()
     }]
 
-    // Combiner toutes les opérations en une seule pour réduire les temps d'attente
     await act(async () => {
       fireEvent.change(input, { target: { value: 'Test question' } })
       fireEvent.submit(form)
-      // Réduire encore le temps de debounce
-      vi.advanceTimersByTime(10)
-      await vi.runAllTimersAsync()
     })
 
-    // Vérifier que le message est affiché
-    expect(screen.getByText('Test response')).toBeInTheDocument()
+    const responseMessage = await screen.findByText('Test response')
+    expect(responseMessage).toBeInTheDocument()
   })
 
-  it('devrait récupérer les données', async () => {
-    const result = await mockSupabaseClient
-      .from('ma_table')
-      .select()
-      .then()
-    
-    expect(result.data).toHaveLength(1)
-  })
-})
+  it('should fetch and display messages from Supabase', async () => {
+    render(<ChatPanel />)
 
-// Example usage:
-const url = config.supabase.url
-const openaiApiKey = config.openai.apiKey; 
+    const welcomeMessage = await screen.findByText('Bienvenue sur AgorIA')
+    expect(welcomeMessage).toBeInTheDocument()
+
+    // Vérifier que le composant affiche le message mocké
+    expect(welcomeMessage).toBeInTheDocument()
+  })
+}) 

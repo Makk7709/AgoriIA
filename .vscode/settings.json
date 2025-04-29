@@ -26,5 +26,6 @@
   "scss.validate": false,
   "editor.quickSuggestions": {
     "strings": true
-  }
+  },
+  "npm.packageManager": "pnpm"
 }
