@@ -64,7 +64,7 @@ cd agoria
 
 2. Installer les dépendances :
 ```bash
-npm install
+pnpm install
 ```
 
 3. Configurer les variables d'environnement :
@@ -74,20 +74,20 @@ cp .env.example .env.local
 
 4. Lancer le serveur de développement :
 ```bash
-npm run dev
+pnpm dev
 ```
 
 ## Scripts Disponibles
 
-- `npm run dev` : Lance le serveur de développement
-- `npm run build` : Compile le projet
-- `npm run start` : Lance le serveur de production
-- `npm run lint` : Vérifie le code avec ESLint
-- `npm run test` : Lance les tests
-- `npm run type-check` : Vérifie les types TypeScript
-- `npm run security:check` : Vérifie les vulnérabilités
-- `npm run security:fix` : Corrige les vulnérabilités
-- `npm run lighthouse` : Analyse les performances
+- `pnpm dev` : Lance le serveur de développement
+- `pnpm build` : Compile le projet
+- `pnpm start` : Lance le serveur de production
+- `pnpm lint` : Vérifie le code avec ESLint
+- `pnpm test` : Lance les tests
+- `pnpm type-check` : Vérifie les types TypeScript
+- `pnpm security:check` : Vérifie les vulnérabilités
+- `pnpm security:fix` : Corrige les vulnérabilités
+- `pnpm lighthouse` : Analyse les performances
 
 ## Structure du Projet
 
