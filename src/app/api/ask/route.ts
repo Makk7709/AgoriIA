@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import OpenAI from 'openai'
 import { supabase } from '@/lib/supabase/config'
+import { getCachedResponse, setCachedResponse, generateCacheKey } from '@/lib/cache/responseCache'
+import { redis } from '@/lib/redis/config'
 
 interface DatabasePosition {
   content: string;
@@ -49,44 +51,93 @@ Format de réponse OBLIGATOIRE :
 3. Conclusion
 [Synthèse neutre et pédagogique]`
 
+const CACHE_TTL = 3600 // 1 heure en secondes
+
+async function getPositionsFromCache(): Promise<DatabasePosition[] | null> {
+  try {
+    const cached = await redis.get('positions:all')
+    return cached ? JSON.parse(cached) : null
+  } catch (error) {
+    console.error('Erreur lors de la récupération du cache des positions:', error)
+    return null
+  }
+}
+
+async function setPositionsInCache(positions: DatabasePosition[]): Promise<void> {
+  try {
+    await redis.setEx('positions:all', CACHE_TTL, JSON.stringify(positions))
+  } catch (error) {
+    console.error('Erreur lors de la mise en cache des positions:', error)
+  }
+}
+
 export async function POST(req: Request) {
+  const startTime = Date.now()
   try {
     const { question } = await req.json()
     console.log('Question reçue:', question)
 
-    // Récupérer les données pertinentes de Supabase
-    const { data: positions, error: positionsError } = await supabase
-      .from('positions')
-      .select(`
-        content,
-        source_url,
-        candidates (
-          name,
-          party
-        ),
-        themes (
-          name
-        )
-      `)
-      .limit(10)
-
-    if (positionsError) {
-      console.error('Erreur Supabase:', positionsError)
-      throw new Error('Erreur lors de la récupération des données')
+    // Vérifier le cache de la réponse
+    const cacheStart = Date.now()
+    const cacheKey = generateCacheKey(question)
+    const cachedResponse = await getCachedResponse(cacheKey)
+    console.log('Temps de vérification du cache:', Date.now() - cacheStart, 'ms')
+    
+    if (cachedResponse) {
+      console.log('Réponse trouvée dans le cache')
+      return NextResponse.json({
+        content: cachedResponse,
+        fromCache: true,
+        responseTime: Date.now() - startTime
+      })
     }
 
+    // Récupérer les données de Supabase (avec cache)
+    const dbStart = Date.now()
+    let positions: DatabasePosition[] | null = await getPositionsFromCache()
+    
+    if (!positions) {
+      const { data, error: positionsError } = await supabase
+        .from('positions')
+        .select(`
+          content,
+          source_url,
+          candidates (
+            name,
+            party
+          ),
+          themes (
+            name
+          )
+        `)
+        .limit(10)
+        .order('created_at', { ascending: false })
+
+      if (positionsError) {
+        console.error('Erreur Supabase:', positionsError)
+        throw new Error('Erreur lors de la récupération des données')
+      }
+
+      positions = data as DatabasePosition[]
+      await setPositionsInCache(positions)
+    }
+    console.log('Temps de requête Supabase:', Date.now() - dbStart, 'ms')
+
     // Préparer le contexte pour l'IA
-    const context: FormattedPosition[] = (positions as DatabasePosition[])?.map(pos => ({
+    const contextStart = Date.now()
+    const context: FormattedPosition[] = positions?.map(pos => ({
       candidat: pos.candidates[0]?.name,
       parti: pos.candidates[0]?.party,
       theme: pos.themes[0]?.name,
       position: pos.content,
       source: pos.source_url
     })) || []
+    console.log('Temps de préparation du contexte:', Date.now() - contextStart, 'ms')
 
     // Générer la réponse avec OpenAI
+    const openaiStart = Date.now()
     const completion = await openai.chat.completions.create({
-      model: "gpt-4",
+      model: "gpt-3.5-turbo", // Utilisation d'un modèle plus léger
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
         { role: "user", content: `Question: "${question}"\n\nContexte disponible: ${JSON.stringify(context)}` }
@@ -94,6 +145,7 @@ export async function POST(req: Request) {
       temperature: 0.7,
       max_tokens: 1000
     })
+    console.log('Temps de génération OpenAI:', Date.now() - openaiStart, 'ms')
 
     const response = completion.choices[0]?.message?.content
 
@@ -101,10 +153,18 @@ export async function POST(req: Request) {
       throw new Error('Pas de réponse générée')
     }
 
-    console.log('Réponse générée:', response)
+    // Mettre en cache la réponse
+    const cacheWriteStart = Date.now()
+    await setCachedResponse(cacheKey, response)
+    console.log('Temps de mise en cache:', Date.now() - cacheWriteStart, 'ms')
+
+    console.log('Réponse générée et mise en cache')
+    console.log('Temps total de traitement:', Date.now() - startTime, 'ms')
 
     return NextResponse.json({
-      content: response
+      content: response,
+      fromCache: false,
+      responseTime: Date.now() - startTime
     })
 
   } catch (error) {
