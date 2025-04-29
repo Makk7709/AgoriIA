@@ -65,19 +65,19 @@ git clone https://github.com/votre-username/agoria.git
 cd agoria
 ```
 
-2. Installer les dépendances :
+1. Installer les dépendances :
 
 ```bash
 pnpm install
 ```
 
-3. Configurer les variables d'environnement :
+1. Configurer les variables d'environnement :
 
 ```bash
 cp .env.example .env.local
 ```
 
-4. Lancer le serveur de développement :
+1. Lancer le serveur de développement :
 
 ```bash
 pnpm dev
@@ -97,7 +97,7 @@ pnpm dev
 
 ## Structure du Projet
 
-```
+```plaintext
 agoria/
 ├── src/
 │   ├── app/              # Routes et pages Next.js
@@ -130,5 +130,6 @@ Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de 
 
 Pour toute question ou suggestion, n'hésitez pas à ouvrir une issue sur GitHub.
 
----
-*Développé avec ❤️ par l'équipe AgorIA - Version MVP 1.1*
+## Équipe
+
+Développé avec ❤️ par l'équipe AgorIA - Version MVP 1.1
