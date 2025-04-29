@@ -4,19 +4,7 @@ import { type AIAnalysis as AIAnalysisType } from '@/lib/openai/summarize'
 import { Button } from '@/components/ui/button'
 import { BarChart2, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-
-interface Position {
-  id: string
-  theme_id: string
-  candidate_id: string
-  content: string
-  source_url: string | null
-  created_at: string
-  candidate: {
-    name: string
-    party: string
-  }
-}
+import type { Position } from '@/lib/types'
 
 interface ComparisonGridProps {
   positions: Position[]

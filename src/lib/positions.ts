@@ -23,7 +23,7 @@ export function selectRepresentativePositions(positions: Position[]): Position[]
     if (selectedPositions.length >= 3) break
 
     // Only add position if we haven't used this candidate yet
-    const candidateName = position.candidate_positions?.[0]?.candidate[0]?.name
+    const candidateName = position.candidate.name
     if (candidateName && !usedCandidates.has(candidateName)) {
       selectedPositions.push(position)
       usedCandidates.add(candidateName)

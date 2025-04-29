@@ -8,7 +8,7 @@ import { selectRepresentativePositions } from "@/lib/positions"
 import { analyzePositions } from "@/lib/openai/summarize"
 import { saveResponse } from "@/lib/supabase/saveResponse"
 import { calculateAlignmentScores } from "@/lib/scoring"
-import type { Position } from "@/lib/positions"
+import type { Position } from "@/lib/types"
 import type { UserResponses } from "@/components/Scoreboard/ResponseForm"
 import { toast } from "sonner"
 
