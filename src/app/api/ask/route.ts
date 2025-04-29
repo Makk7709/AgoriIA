@@ -1,28 +1,7 @@
 import { NextResponse } from 'next/server'
 import OpenAI from 'openai'
-import { supabase } from '@/lib/supabase/config'
+import { pinecone } from '@/lib/pinecone'
 import { getCachedResponse, setCachedResponse, generateCacheKey } from '@/lib/cache/responseCache'
-import { redis } from '@/lib/redis/config'
-
-interface DatabasePosition {
-  content: string;
-  source_url: string;
-  candidates: Array<{
-    name: string;
-    party: string;
-  }>;
-  themes: Array<{
-    name: string;
-  }>;
-}
-
-interface FormattedPosition {
-  candidat: string | undefined;
-  parti: string | undefined;
-  theme: string | undefined;
-  position: string;
-  source: string;
-}
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
@@ -51,38 +30,15 @@ Format de réponse OBLIGATOIRE :
 3. Conclusion
 [Synthèse neutre et pédagogique]`
 
-const CACHE_TTL = 3600 // 1 heure en secondes
-
-async function getPositionsFromCache(): Promise<DatabasePosition[] | null> {
-  try {
-    const cached = await redis.get('positions:all')
-    return cached ? JSON.parse(cached) : null
-  } catch (error) {
-    console.error('Erreur lors de la récupération du cache des positions:', error)
-    return null
-  }
-}
-
-async function setPositionsInCache(positions: DatabasePosition[]): Promise<void> {
-  try {
-    await redis.setEx('positions:all', CACHE_TTL, JSON.stringify(positions))
-  } catch (error) {
-    console.error('Erreur lors de la mise en cache des positions:', error)
-  }
-}
-
 export async function POST(req: Request) {
   const startTime = Date.now()
   try {
     const { question } = await req.json()
-    console.log('Question reçue:', question)
+    console.log("🔎 Question posée :", question)
 
     // Vérifier le cache de la réponse
-    const cacheStart = Date.now()
     const cacheKey = generateCacheKey(question)
     const cachedResponse = await getCachedResponse(cacheKey)
-    console.log('Temps de vérification du cache:', Date.now() - cacheStart, 'ms')
-    
     if (cachedResponse) {
       console.log('Réponse trouvée dans le cache')
       return NextResponse.json({
@@ -92,55 +48,38 @@ export async function POST(req: Request) {
       })
     }
 
-    // Récupérer les données de Supabase (avec cache)
-    const dbStart = Date.now()
-    let positions: DatabasePosition[] | null = await getPositionsFromCache()
-    
-    if (!positions) {
-      const { data, error: positionsError } = await supabase
-        .from('positions')
-        .select(`
-          content,
-          source_url,
-          candidates (
-            name,
-            party
-          ),
-          themes (
-            name
-          )
-        `)
-        .limit(10)
-        .order('created_at', { ascending: false })
+    // Générer l'embedding de la question
+    const embeddingStart = Date.now()
+    const embeddingResponse = await openai.embeddings.create({
+      model: "text-embedding-ada-002",
+      input: question
+    })
+    const queryVector = embeddingResponse.data[0].embedding
+    console.log('Temps de génération embedding:', Date.now() - embeddingStart, 'ms')
 
-      if (positionsError) {
-        console.error('Erreur Supabase:', positionsError)
-        throw new Error('Erreur lors de la récupération des données')
-      }
+    // Interroger Pinecone
+    const pineconeStart = Date.now()
+    const index = pinecone.Index(process.env.PINECONE_INDEX_NAME!)
+    const pineconeResponse = await index.query({
+      vector: queryVector,
+      topK: 5,
+      includeMetadata: true
+    })
+    console.log('Temps de requête Pinecone:', Date.now() - pineconeStart, 'ms')
 
-      positions = data as DatabasePosition[]
-      await setPositionsInCache(positions)
-    }
-    console.log('Temps de requête Supabase:', Date.now() - dbStart, 'ms')
-
-    // Préparer le contexte pour l'IA
-    const contextStart = Date.now()
-    const context: FormattedPosition[] = positions?.map(pos => ({
-      candidat: pos.candidates[0]?.name,
-      parti: pos.candidates[0]?.party,
-      theme: pos.themes[0]?.name,
-      position: pos.content,
-      source: pos.source_url
-    })) || []
-    console.log('Temps de préparation du contexte:', Date.now() - contextStart, 'ms')
+    // Construire le contexte
+    const context = pineconeResponse.matches
+      .map((m) => m.metadata?.summary || m.metadata?.position || "")
+      .join("\n---\n")
+    console.log("📚 Contexte vectoriel utilisé :", context)
 
     // Générer la réponse avec OpenAI
     const openaiStart = Date.now()
     const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo", // Utilisation d'un modèle plus léger
+      model: "gpt-3.5-turbo",
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
-        { role: "user", content: `Question: "${question}"\n\nContexte disponible: ${JSON.stringify(context)}` }
+        { role: "user", content: `Question: "${question}"\n\nContexte:\n${context}` }
       ],
       temperature: 0.7,
       max_tokens: 1000
@@ -154,18 +93,17 @@ export async function POST(req: Request) {
     }
 
     // Mettre en cache la réponse
-    const cacheWriteStart = Date.now()
     await setCachedResponse(cacheKey, response)
-    console.log('Temps de mise en cache:', Date.now() - cacheWriteStart, 'ms')
 
-    console.log('Réponse générée et mise en cache')
     console.log('Temps total de traitement:', Date.now() - startTime, 'ms')
 
-    return NextResponse.json({
+    const finalResponse = {
       content: response,
       fromCache: false,
       responseTime: Date.now() - startTime
-    })
+    }
+    console.log("✅ Réponse retournée au client :", finalResponse)
+    return NextResponse.json(finalResponse)
 
   } catch (error) {
     console.error('Erreur API:', error)
