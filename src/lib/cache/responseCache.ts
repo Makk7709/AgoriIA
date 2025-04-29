@@ -14,7 +14,7 @@ export async function getCachedResponse(key: string): Promise<string | null> {
 
 export async function setCachedResponse(key: string, value: string): Promise<void> {
   try {
-    await redis.setex(key, CACHE_TTL, value)
+    await redis.setEx(key, CACHE_TTL, value)
   } catch (error) {
     console.error('Erreur lors de la mise en cache:', error)
   }
