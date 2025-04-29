@@ -7,6 +7,7 @@ AgorIA est une plateforme d'analyse politique qui permet de comparer les positio
 ## Version MVP 1.1
 
 La version MVP 1.1 apporte les améliorations suivantes :
+
 - 🚀 Interface utilisateur optimisée et responsive
 - 🔍 Système de recherche vectorielle amélioré
 - 🎯 Suggestions de questions contextuelles
@@ -42,6 +43,7 @@ La version MVP 1.1 apporte les améliorations suivantes :
 #### Recherche Vectorielle avec Pinecone
 
 La plateforme intègre une recherche vectorielle puissante basée sur Pinecone, permettant :
+
 - Indexation sémantique des positions politiques
 - Recherche contextuelle et sémantique
 - Amélioration de la pertinence des résultats
@@ -57,22 +59,26 @@ La plateforme intègre une recherche vectorielle puissante basée sur Pinecone, 
 ## Installation
 
 1. Cloner le repository :
+
 ```bash
 git clone https://github.com/votre-username/agoria.git
 cd agoria
 ```
 
 2. Installer les dépendances :
+
 ```bash
 pnpm install
 ```
 
 3. Configurer les variables d'environnement :
+
 ```bash
 cp .env.example .env.local
 ```
 
 4. Lancer le serveur de développement :
+
 ```bash
 pnpm dev
 ```
