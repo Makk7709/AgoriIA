@@ -32,24 +32,28 @@ vi.mock('process', () => ({
   }
 }))
 
+// Mock Supabase
+vi.mock('@/lib/supabase/config', () => ({
+  supabase: {
+    from: vi.fn()
+  }
+}))
+
 describe('POST /api/ask', () => {
   const mockPosition: Position = {
     id: '1',
     theme_id: 'theme-1',
+    candidate_id: 'candidate-1',
+    content: 'Test Position',
+    source_url: 'https://example.com',
+    created_at: '2024-01-01T00:00:00Z',
     title: 'Test Position',
     description: 'Test Description',
-    created_at: '2024-01-01T00:00:00Z',
-    candidate_positions: [
-      {
-        candidate: [
-          {
-            id: 'candidate-1',
-            name: 'Test Candidate',
-            party: 'Test Party'
-          }
-        ]
-      }
-    ]
+    candidate: {
+      id: 'candidate-1',
+      name: 'Test Candidate',
+      party: 'Test Party'
+    }
   }
 
   beforeEach(() => {
@@ -58,14 +62,18 @@ describe('POST /api/ask', () => {
 
   it('should return a response when theme is provided', async () => {
     // Mock Supabase response
-    vi.spyOn(supabase, 'from').mockReturnValue({
+    const mockSupabaseResponse = {
+      data: [mockPosition],
+      error: null
+    }
+
+    const mockSupabaseQuery = {
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
-      then: vi.fn().mockResolvedValue({
-        data: [mockPosition],
-        error: null
-      })
-    } as any)
+      single: vi.fn().mockResolvedValue(mockSupabaseResponse)
+    }
+
+    vi.mocked(supabase.from).mockReturnValue(mockSupabaseQuery as any)
 
     // Create request
     const request = new Request('http://localhost:3000/api/ask', {
@@ -94,14 +102,18 @@ describe('POST /api/ask', () => {
 
   it('should handle errors gracefully', async () => {
     // Mock Supabase error
-    vi.spyOn(supabase, 'from').mockReturnValue({
+    const mockSupabaseError = {
+      data: null,
+      error: { message: 'Test error' }
+    }
+
+    const mockSupabaseQuery = {
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
-      then: vi.fn().mockResolvedValue({
-        data: null,
-        error: { message: 'Test error' }
-      })
-    } as any)
+      single: vi.fn().mockResolvedValue(mockSupabaseError)
+    }
+
+    vi.mocked(supabase.from).mockReturnValue(mockSupabaseQuery as any)
 
     // Create request
     const request = new Request('http://localhost:3000/api/ask', {

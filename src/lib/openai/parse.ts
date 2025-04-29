@@ -7,12 +7,14 @@ const openai = new OpenAI({
 });
 
 export interface Position {
-  theme: string;
-  position: string;
-  summary: string;
-  candidate: string;
-  confidence: number;
-  source: string;
+  title: string;
+  description: string;
+  content: string;
+  candidate_id: string;
+  candidate: {
+    id: string;
+    name: string;
+  };
 }
 
 export interface Theme {
@@ -24,59 +26,54 @@ export interface Theme {
 
 export async function extractPositionsFromText(
   text: string,
-  candidate: string
+  candidate: { id: string; name: string }
 ): Promise<Position[]> {
   if (!text) {
-    throw new Error("Le texte ne peut pas être vide");
+    console.warn("Texte vide fourni à extractPositionsFromText");
+    return [];
   }
 
-  const prompt = `
-En tant qu'assistant civic-tech neutre, analysez le texte suivant du programme politique de ${candidate} et extrayez les positions par thème.
+  if (!candidate?.id || !candidate?.name) {
+    console.error("Candidat invalide fourni à extractPositionsFromText:", candidate);
+    throw new Error("Candidat invalide");
+  }
+
+  const prompt = `Analyse le texte suivant et extrait les positions politiques. Pour chaque position, fournis :
+1. Un titre concis
+2. Une description détaillée
+3. Le contenu exact de la position
 
 Texte à analyser :
 ${text}
-
-Pour chaque thème identifié, fournissez :
-1. Le nom du thème (parmi : Économie, Écologie, Sécurité, Éducation, Santé, Europe, Institutions, Social)
-2. La position exprimée
-3. Un résumé objectif et factuel
-4. Un score de confiance (0-1) sur la clarté de la position
-5. La source exacte dans le texte
 
 Format de réponse attendu (JSON) :
 {
   "positions": [
     {
-      "theme": "string",
-      "position": "string",
-      "summary": "string",
-      "confidence": number,
-      "source": "string"
+      "title": "Titre de la position",
+      "description": "Description détaillée",
+      "content": "Contenu exact de la position"
     }
   ]
-}
-
-Style : neutre, factuel, civic-tech. Évitez tout parti pris politique.
-`;
-
-  const completion = await openai.chat.completions.create({
-    model: "gpt-4-turbo-preview",
-    messages: [
-      {
-        role: "system",
-        content: "Vous êtes un assistant civic-tech neutre qui aide à analyser les programmes politiques de manière objective."
-      },
-      {
-        role: "user",
-        content: prompt
-      }
-    ],
-    temperature: 0.3,
-    max_tokens: 2000,
-    response_format: { type: "json_object" }
-  });
+}`;
 
   try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4-turbo-preview",
+      messages: [
+        {
+          role: "system",
+          content: "Tu es un expert en analyse de programmes politiques. Ton rôle est d'extraire les positions politiques de manière neutre et objective."
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      temperature: 0.3,
+      response_format: { type: "json_object" }
+    });
+
     const response = completion.choices[0].message.content;
     if (!response) {
       throw new Error("Pas de réponse d'OpenAI");
@@ -90,7 +87,11 @@ Style : neutre, factuel, civic-tech. Évitez tout parti pris politique.
 
     return parsedResponse.positions.map((pos: any) => ({
       ...pos,
-      candidate,
+      candidate_id: candidate.id,
+      candidate: {
+        id: candidate.id,
+        name: candidate.name
+      }
     }));
   } catch (error) {
     console.error("Erreur lors de l'extraction des positions:", error);
@@ -116,12 +117,14 @@ Format de réponse attendu (JSON) :
 {
   "positions": [
     {
-      "theme": "string",
-      "position": "string",
-      "summary": "string",
-      "candidate": "string",
-      "confidence": number,
-      "source": "string"
+      "title": "string",
+      "description": "string",
+      "content": "string",
+      "candidate_id": "string",
+      "candidate": {
+        "id": "string",
+        "name": "string"
+      }
     }
   ]
 }

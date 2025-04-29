@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import type { Theme, Position } from '@/lib/types'
+import { sanitizePositionContent, logContentDebug } from '@/lib/utils'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -47,16 +48,21 @@ export async function getThemeWithPositions(themeId: string): Promise<{ theme: T
       return null
     }
 
-    // Transform the data to match the Position interface
-    const transformedPositions = positions?.map(pos => ({
-      id: pos.id,
-      theme_id: pos.theme_id,
-      candidate_id: pos.candidate_id,
-      content: pos.content,
-      source_url: pos.source_url,
-      created_at: pos.created_at,
-      candidate: Array.isArray(pos.candidate) ? pos.candidate[0] : pos.candidate
-    })) || []
+    // Transform the data to match the Position interface and clean the content
+    const transformedPositions = positions?.map(pos => {
+      const cleanContent = sanitizePositionContent(pos.content);
+      logContentDebug(cleanContent, `getThemeWithPositions-${pos.id}`);
+
+      return {
+        id: pos.id,
+        theme_id: pos.theme_id,
+        candidate_id: pos.candidate_id,
+        content: cleanContent,
+        source_url: pos.source_url,
+        created_at: pos.created_at,
+        candidate: Array.isArray(pos.candidate) ? pos.candidate[0] : pos.candidate
+      };
+    }) || []
 
     return {
       theme,

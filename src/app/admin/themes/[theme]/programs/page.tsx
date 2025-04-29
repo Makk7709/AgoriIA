@@ -9,13 +9,12 @@ export const metadata: Metadata = {
   description: 'Gestion des programmes PDF par thème'
 }
 
-interface Props {
-  params: {
-    theme: string
-  }
+type Props = {
+  params: { theme: string }
+  searchParams: Record<string, string | string[] | undefined>
 }
 
-export default async function ThemeProgramsPage({ params }: Props) {
+export default async function ThemeProgramsPage({ params, searchParams }: Props) {
   const supabase = await createSupabaseServerClient()
   
   // Vérifier si l'utilisateur est connecté et a les droits d'admin

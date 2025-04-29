@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
+import { sanitizePositionContent, isValidContent, logContentDebug } from './clean'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -32,4 +33,7 @@ export function generateSlug(text: string) {
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)+/g, '')
-} 
+}
+
+// Export des fonctions de nettoyage
+export { sanitizePositionContent, isValidContent, logContentDebug } 

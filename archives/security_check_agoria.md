@@ -144,5 +144,4 @@ Cependant, plusieurs points nécessitent une attention immédiate :
 
 Les améliorations recommandées visent à renforcer davantage la sécurité et la robustesse du système.
 
----
-*Rapport généré automatiquement par Argos, Vérificateur du Bouclier & Gardien des Permissions* 
+### Rapport généré automatiquement par Argos, Vérificateur du Bouclier & Gardien des Permissions

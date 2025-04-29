@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { supabase } from '@/lib/supabase/config'
-import { getThemeWithPositions } from '../page'
+import { getThemeWithPositions } from '@/lib/supabase/getThemeWithPositions'
 
 // Mock Supabase client
 vi.mock('@/lib/supabase/config', () => ({

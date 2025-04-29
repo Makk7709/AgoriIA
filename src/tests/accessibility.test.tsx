@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import { axe, toHaveNoViolations } from 'jest-axe';
+import { expect, describe, it } from 'vitest';
 import { ThemeHeader } from '@/components/themes/ThemeHeader';
 import { ComparisonGrid } from '@/components/themes/ComparisonGrid';
 import { MatchResults } from '@/components/themes/MatchResults';
@@ -7,84 +7,88 @@ import { Scale } from 'lucide-react';
 import Home from '../app/page';
 import Themes from '../app/themes/page';
 import Theme from '../app/themes/[theme]/page';
+import axeCore from 'axe-core';
 
-expect.extend(toHaveNoViolations);
+declare global {
+  namespace Vi {
+    interface Assertion {
+      toHaveNoViolations(): Promise<void>;
+    }
+  }
+}
 
 describe('Accessibility Tests', () => {
-  // Test ThemeHeader
-  test('ThemeHeader should be accessible', async () => {
+  it('Home page should have no accessibility violations', async () => {
+    const { container } = render(<Home />);
+    const results = await axeCore.run(container);
+    expect(results.violations).toEqual([]);
+  });
+
+  it('Themes page should have no accessibility violations', async () => {
+    const { container } = render(<Themes />);
+    const results = await axeCore.run(container);
+    expect(results.violations).toEqual([]);
+  });
+
+  it('Theme page should have no accessibility violations', async () => {
+    const { container } = render(<Theme params={{ theme: 'test-theme' }} />);
+    const results = await axeCore.run(container);
+    expect(results.violations).toEqual([]);
+  });
+
+  it('ThemeHeader should have no accessibility violations', async () => {
     const { container } = render(
       <ThemeHeader
-        title="Économie et emploi"
-        description="Découvrez et comparez les positions des candidats sur les questions économiques et l'emploi."
+        title="Test Theme"
+        description="Test Description"
         icon={Scale}
-        themeId="economy"
-        totalThemes={8}
+        themeId="test-theme"
+        totalThemes={5}
         currentThemeIndex={0}
       />
     );
-
-    const results = await axe(container);
-    expect(results).toHaveNoViolations();
+    const results = await axeCore.run(container);
+    expect(results.violations).toEqual([]);
   });
 
-  // Test ComparisonGrid
-  test('ComparisonGrid should be accessible', async () => {
-    const mockPositions = [
-      {
-        id: '1',
-        title: 'Réduction du temps de travail',
-        description: 'Proposition de réduire la semaine de travail à 32 heures.',
-        candidates: [
-          {
-            id: '1',
-            name: 'Candidat A',
-            position: 'agree' as const,
-            explanation: 'Soutient la réduction du temps de travail pour améliorer la qualité de vie.'
-          },
-          {
-            id: '2',
-            name: 'Candidat B',
-            position: 'disagree' as const,
-            explanation: 'Craint l\'impact sur la compétitivité des entreprises.'
-          }
-        ]
-      }
-    ];
+  it('ComparisonGrid should have no accessibility violations', async () => {
+    const mockPositions = [{
+      id: 'test-position',
+      title: 'Test Position',
+      description: 'Test Description',
+      candidates: [{
+        id: 'test-candidate',
+        name: 'Test Candidate',
+        position: 'agree' as const,
+        explanation: 'Test explanation'
+      }]
+    }];
 
     const { container } = render(
-      <ComparisonGrid positions={mockPositions} />
+      <ComparisonGrid
+        positions={mockPositions}
+      />
     );
-
-    const results = await axe(container);
-    expect(results).toHaveNoViolations();
+    const results = await axeCore.run(container);
+    expect(results.violations).toEqual([]);
   });
 
-  // Test MatchResults
-  test('MatchResults should be accessible', async () => {
-    const mockCandidates = [
-      {
-        id: '1',
-        name: 'Candidat A',
-        score: 75,
-        matchCount: 15,
-        totalQuestions: 20
-      },
-      {
-        id: '2',
-        name: 'Candidat B',
-        score: 60,
-        matchCount: 12,
-        totalQuestions: 20
-      }
-    ];
+  it('MatchResults should have no accessibility violations', async () => {
+    const mockCandidates = [{
+      id: 'test-candidate',
+      name: 'Test Candidate',
+      score: 80,
+      matchCount: 4,
+      totalQuestions: 5
+    }];
 
     const { container } = render(
-      <MatchResults candidates={mockCandidates} />
+      <MatchResults
+        candidates={mockCandidates}
+      />
     );
-
-    const results = await axe(container);
-    expect(results).toHaveNoViolations();
+    const results = await axeCore.run(container);
+    expect(results.violations).toEqual([]);
   });
 
   // Test des contrastes
@@ -97,8 +101,8 @@ describe('Accessibility Tests', () => {
       </div>
     );
 
-    const results = await axe(container);
-    expect(results).toHaveNoViolations();
+    const results = await axeCore.run(container);
+    expect(results.violations).toEqual([]);
   });
 
   // Test des landmarks
@@ -123,8 +127,8 @@ describe('Accessibility Tests', () => {
       </div>
     );
 
-    const results = await axe(container);
-    expect(results).toHaveNoViolations();
+    const results = await axeCore.run(container);
+    expect(results.violations).toEqual([]);
   });
 
   // Test des composants interactifs
@@ -139,25 +143,7 @@ describe('Accessibility Tests', () => {
       </div>
     );
 
-    const results = await axe(container);
-    expect(results).toHaveNoViolations();
-  });
-
-  it('should have no accessibility violations on home page', async () => {
-    const { container } = render(<Home />);
-    const results = await axe(container);
-    expect(results).toHaveNoViolations();
-  });
-
-  it('should have no accessibility violations on themes page', async () => {
-    const { container } = render(<Themes />);
-    const results = await axe(container);
-    expect(results).toHaveNoViolations();
-  });
-
-  it('should have no accessibility violations on theme detail page', async () => {
-    const { container } = render(<Theme />);
-    const results = await axe(container);
-    expect(results).toHaveNoViolations();
+    const results = await axeCore.run(container);
+    expect(results.violations).toEqual([]);
   });
 }); 

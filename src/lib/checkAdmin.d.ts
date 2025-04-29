@@ -1,0 +1,1 @@
+export function checkAdminStatus(userEmail: string): Promise<boolean>; 

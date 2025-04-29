@@ -1,5 +1,37 @@
 [
   {
+    "name": "auditRan",
+    "expected": 1,
+    "actual": 0,
+    "values": [
+      0,
+      0,
+      0
+    ],
+    "operator": ">=",
+    "passed": false,
+    "message": "\"tap-targets\" is not a known audit.",
+    "auditId": "tap-targets",
+    "level": "error",
+    "url": "http://localhost:3000/"
+  },
+  {
+    "name": "auditRan",
+    "expected": 1,
+    "actual": 0,
+    "values": [
+      0,
+      0,
+      0
+    ],
+    "operator": ">=",
+    "passed": false,
+    "message": "\"plugins\" is not a known audit.",
+    "auditId": "plugins",
+    "level": "error",
+    "url": "http://localhost:3000/"
+  },
+  {
     "name": "minScore",
     "expected": 0.8,
     "actual": null,
@@ -20,6 +52,55 @@
   {
     "name": "minScore",
     "expected": 0.8,
+    "actual": 0,
+    "values": [
+      0,
+      0,
+      0
+    ],
+    "operator": ">=",
+    "passed": false,
+    "auditId": "bf-cache",
+    "level": "warn",
+    "url": "http://localhost:3000/",
+    "auditTitle": "Page prevented back/forward cache restoration",
+    "auditDocumentationLink": "https://developer.chrome.com/docs/lighthouse/performance/bf-cache/"
+  },
+  {
+    "name": "auditRan",
+    "expected": 1,
+    "actual": 0,
+    "values": [
+      0,
+      0,
+      0
+    ],
+    "operator": ">=",
+    "passed": false,
+    "message": "\"tap-targets\" is not a known audit.",
+    "auditId": "tap-targets",
+    "level": "error",
+    "url": "http://localhost:3000/themes"
+  },
+  {
+    "name": "auditRan",
+    "expected": 1,
+    "actual": 0,
+    "values": [
+      0,
+      0,
+      0
+    ],
+    "operator": ">=",
+    "passed": false,
+    "message": "\"plugins\" is not a known audit.",
+    "auditId": "plugins",
+    "level": "error",
+    "url": "http://localhost:3000/themes"
+  },
+  {
+    "name": "minScore",
+    "expected": 0.8,
     "actual": null,
     "values": [
       null,
@@ -34,6 +115,55 @@
     "url": "http://localhost:3000/themes",
     "auditTitle": "Structured data is valid",
     "auditDocumentationLink": "https://developer.chrome.com/docs/lighthouse/seo/structured-data/"
+  },
+  {
+    "name": "minScore",
+    "expected": 0.8,
+    "actual": 0,
+    "values": [
+      0,
+      0,
+      0
+    ],
+    "operator": ">=",
+    "passed": false,
+    "auditId": "bf-cache",
+    "level": "warn",
+    "url": "http://localhost:3000/themes",
+    "auditTitle": "Page prevented back/forward cache restoration",
+    "auditDocumentationLink": "https://developer.chrome.com/docs/lighthouse/performance/bf-cache/"
+  },
+  {
+    "name": "auditRan",
+    "expected": 1,
+    "actual": 0,
+    "values": [
+      0,
+      0,
+      0
+    ],
+    "operator": ">=",
+    "passed": false,
+    "message": "\"tap-targets\" is not a known audit.",
+    "auditId": "tap-targets",
+    "level": "error",
+    "url": "http://localhost:3000/compare"
+  },
+  {
+    "name": "auditRan",
+    "expected": 1,
+    "actual": 0,
+    "values": [
+      0,
+      0,
+      0
+    ],
+    "operator": ">=",
+    "passed": false,
+    "message": "\"plugins\" is not a known audit.",
+    "auditId": "plugins",
+    "level": "error",
+    "url": "http://localhost:3000/compare"
   },
   {
     "name": "minScore",

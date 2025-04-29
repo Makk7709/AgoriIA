@@ -11,6 +11,7 @@ export interface Position {
     id: string
     name: string
     party: string
+    position?: 'agree' | 'disagree' | 'neutral'
   }
 }
 
@@ -44,4 +45,9 @@ export interface CandidatePosition {
   position: 'agree' | 'disagree' | 'neutral'
   explanation: string | null
   created_at: string
+}
+
+export interface AnsweredPosition {
+  position: Position;
+  userResponse: 'agree' | 'disagree' | 'neutral';
 } 

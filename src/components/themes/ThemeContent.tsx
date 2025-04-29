@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
+import { cn, sanitizePositionContent, logContentDebug } from '@/lib/utils';
 import type { Theme, Position } from '@/lib/types';
 
 // Données temporaires pour le MVP
@@ -98,64 +98,70 @@ export function ThemeContent({ theme, positions, className }: ThemeContentProps)
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {uniquePositions.length > 0 ? (
           <div className="space-y-6">
-            {uniquePositions.map((position, index) => (
-              <motion.div
-                key={position.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <Card className="overflow-hidden bg-white/80 backdrop-blur-sm border-2 border-[#002654]/10 hover:border-[#002654]/30 transition-all">
-                  <CardContent className="p-6">
-                    <div className="flex items-start space-x-4">
-                      <Avatar className="h-12 w-12 border-2 border-[#002654]/10">
-                        <AvatarFallback className="bg-gradient-to-br from-[#002654] to-[#EF4135] text-white">
-                          {position.candidate.name.split(' ').map(n => n[0]).join('')}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-3">
-                            <h3 className="text-lg font-semibold text-[#002654] truncate">
-                              {position.candidate.name}
-                            </h3>
-                            <Badge variant="outline" className="bg-[#002654]/5 text-[#002654]">
-                              {position.candidate.party}
-                            </Badge>
+            {uniquePositions.map((position, index) => {
+              // Nettoyer le contenu avant l'affichage
+              const cleanContent = sanitizePositionContent(position.content);
+              logContentDebug(cleanContent, `ThemeContent-${position.id}`);
+
+              return (
+                <motion.div
+                  key={position.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <Card className="overflow-hidden bg-white/80 backdrop-blur-sm border-2 border-[#002654]/10 hover:border-[#002654]/30 transition-all">
+                    <CardContent className="p-6">
+                      <div className="flex items-start space-x-4">
+                        <Avatar className="h-12 w-12 border-2 border-[#002654]/10">
+                          <AvatarFallback className="bg-gradient-to-br from-[#002654] to-[#EF4135] text-white">
+                            {position.candidate.name.split(' ').map(n => n[0]).join('')}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-3">
+                              <h3 className="text-lg font-semibold text-[#002654] truncate">
+                                {position.candidate.name}
+                              </h3>
+                              <Badge variant="outline" className="bg-[#002654]/5 text-[#002654]">
+                                {position.candidate.party}
+                              </Badge>
+                            </div>
                           </div>
-                        </div>
-                        <p className="mt-4 text-[#002654]/80 text-base leading-relaxed whitespace-pre-wrap">
-                          {position.content}
-                        </p>
-                        {position.source_url && (
-                          <a
-                            href={position.source_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="mt-4 inline-flex items-center text-sm text-[#002654]/60 hover:text-[#002654] transition-colors"
-                          >
-                            Source
-                            <svg
-                              className="ml-1 h-4 w-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
+                          <p className="mt-4 text-[#002654]/80 text-base leading-relaxed whitespace-pre-wrap">
+                            {cleanContent}
+                          </p>
+                          {position.source_url && (
+                            <a
+                              href={position.source_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="mt-4 inline-flex items-center text-sm text-[#002654]/60 hover:text-[#002654] transition-colors"
                             >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                              />
-                            </svg>
-                          </a>
-                        )}
+                              Source
+                              <svg
+                                className="ml-1 h-4 w-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                                />
+                              </svg>
+                            </a>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              );
+            })}
           </div>
         ) : (
           <motion.div

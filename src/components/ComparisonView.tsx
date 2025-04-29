@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { cn } from '@/lib/utils'
+import { cn, sanitizePositionContent, logContentDebug } from '@/lib/utils'
 import type { Position, Theme, Candidate } from '@/lib/types'
 
 interface ComparisonViewProps {
@@ -81,51 +81,61 @@ export function ComparisonView({ theme, positions, candidates, className }: Comp
                       <TabsTrigger value="analysis" className="flex-1">Résumé</TabsTrigger>
                     </TabsList>
                     <TabsContent value="positions" className="mt-4 space-y-4">
-                      {positions.map((position) => (
-                        <div key={position.id} className="prose max-w-none">
-                          {position.title && (
-                            <h3 className="text-lg font-semibold text-[#002654] mb-2">
-                              {position.title}
-                            </h3>
-                          )}
-                          <p className="text-[#002654]/80 whitespace-pre-wrap">
-                            {position.content}
-                          </p>
-                          {position.source_url && (
-                            <a
-                              href={position.source_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="mt-2 inline-flex items-center text-sm text-[#002654]/60 hover:text-[#002654] transition-colors"
-                            >
-                              Source
-                              <svg
-                                className="ml-1 h-4 w-4"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
+                      {positions.map((position) => {
+                        // Nettoyer le contenu avant l'affichage
+                        const cleanContent = sanitizePositionContent(position.content);
+                        logContentDebug(cleanContent, `ComparisonView-${position.id}`);
+
+                        return (
+                          <div key={position.id} className="prose max-w-none">
+                            {position.title && (
+                              <h3 className="text-lg font-semibold text-[#002654] mb-2">
+                                {position.title}
+                              </h3>
+                            )}
+                            <p className="text-[#002654]/80 whitespace-pre-wrap">
+                              {cleanContent}
+                            </p>
+                            {position.source_url && (
+                              <a
+                                href={position.source_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="mt-2 inline-flex items-center text-sm text-[#002654]/60 hover:text-[#002654] transition-colors"
                               >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                                />
-                              </svg>
-                            </a>
-                          )}
-                        </div>
-                      ))}
+                                Source
+                                <svg
+                                  className="ml-1 h-4 w-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                                  />
+                                </svg>
+                              </a>
+                            )}
+                          </div>
+                        );
+                      })}
                     </TabsContent>
                     <TabsContent value="analysis" className="mt-4">
                       <div className="prose max-w-none">
                         <h3 className="text-lg font-semibold text-[#002654] mb-4">Points clés</h3>
                         <ul className="space-y-4">
-                          {positions.map(position => (
-                            <li key={position.id} className="text-[#002654]/80">
-                              {position.description || position.content}
-                            </li>
-                          ))}
+                          {positions.map(position => {
+                            const cleanContent = sanitizePositionContent(position.description || position.content);
+                            logContentDebug(cleanContent, `ComparisonView-Analysis-${position.id}`);
+                            return (
+                              <li key={position.id} className="text-[#002654]/80">
+                                {cleanContent}
+                              </li>
+                            );
+                          })}
                         </ul>
                       </div>
                     </TabsContent>

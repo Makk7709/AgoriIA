@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { sanitizePositionContent, logContentDebug } from '../src/lib/utils'
 import dotenv from 'dotenv'
 
 // Charger les variables d'environnement
@@ -31,14 +32,20 @@ async function insertTestPositions() {
     console.log('📊 Candidats trouvés:', candidates)
 
     // 2. Créer des positions pour chaque candidat sur le thème "economie"
-    const positions = candidates.map(candidate => ({
-      theme_id: 'economie',
-      candidate_id: candidate.id,
-      content: `Position de ${candidate.name} sur l'économie: Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
-      source_url: `https://example.com/position/${candidate.id}`,
-      title: `Position économique de ${candidate.name}`,
-      description: `Description de la position de ${candidate.name} sur l'économie`
-    }))
+    const positions = candidates.map(candidate => {
+      const content = `Position de ${candidate.name} sur l'économie: Lorem ipsum dolor sit amet, consectetur adipiscing elit.`
+      const cleanContent = sanitizePositionContent(content)
+      logContentDebug(cleanContent, `insertTestPositions-${candidate.id}`)
+
+      return {
+        theme_id: 'economie',
+        candidate_id: candidate.id,
+        content: cleanContent,
+        source_url: `https://example.com/position/${candidate.id}`,
+        title: `Position économique de ${candidate.name}`,
+        description: `Description de la position de ${candidate.name} sur l'économie`
+      }
+    })
 
     // 3. Insérer les positions
     const { data: insertedPositions, error: positionsError } = await supabase

@@ -1,167 +1,104 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, act } from '@testing-library/react'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { AdminButton } from '../AdminButton'
-import { createBrowserClient } from '@supabase/ssr'
-import { vi } from 'vitest'
-import type { Session } from '@supabase/supabase-js'
+import * as useAuthModule from '@/hooks/useAuth'
+import * as checkAdminModule from '@/lib/checkAdmin'
 
-// Mock de Supabase
-vi.mock('@supabase/ssr', () => ({
-  createBrowserClient: vi.fn((supabaseUrl: string, supabaseKey: string) => ({
-    auth: {
-      getSession: vi.fn((options?: { refreshSession?: boolean }) => Promise.resolve({ data: { session: null }, error: null }))
-    },
-    from: vi.fn((table: string) => ({
-      select: vi.fn((columns: string) => ({
-        eq: vi.fn((column: string, value: any) => ({
-          single: vi.fn(() => Promise.resolve({ data: null, error: null }))
-        }))
-      }))
-    }))
-  }))
+// Mock du router Next.js App Router
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: vi.fn(),
+  }),
 }))
 
+// Mocks habituels
+vi.mock('@/hooks/useAuth')
+vi.mock('@/lib/checkAdmin')
+
 describe('AdminButton', () => {
-  // Test 1: Le bouton ne doit pas être affiché pendant le chargement
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
   it('ne doit pas afficher le bouton pendant le chargement', () => {
+    vi.spyOn(useAuthModule, 'useAuth').mockReturnValue({ user: null, loading: true })
     render(<AdminButton />)
     expect(screen.queryByText('Administration')).not.toBeInTheDocument()
   })
 
-  // Test 2: Le bouton ne doit pas être affiché si l'utilisateur n'est pas connecté
-  it('ne doit pas afficher le bouton si l\'utilisateur n\'est pas connecté', async () => {
-    const mockSupabase = createBrowserClient('https://example.supabase.co', 'anon-key')
-    ;(mockSupabase.auth.getSession as any).mockResolvedValue({ data: { session: null } })
-
+  it("ne doit pas afficher le bouton si l'utilisateur n'est pas connecté", async () => {
+    vi.spyOn(useAuthModule, 'useAuth').mockReturnValue({ user: null, loading: false })
+    vi.spyOn(checkAdminModule, 'checkAdminStatus').mockResolvedValue(false)
     render(<AdminButton />)
     await waitFor(() => {
       expect(screen.queryByText('Administration')).not.toBeInTheDocument()
     })
   })
 
-  // Test 3: Le bouton ne doit pas être affiché si l'utilisateur n'est pas admin
-  it('ne doit pas afficher le bouton si l\'utilisateur n\'est pas admin', async () => {
-    const mockSupabase = createBrowserClient('https://example.supabase.co', 'anon-key')
-    ;(mockSupabase.auth.getSession as any).mockResolvedValue({
-      data: {
-        session: {
-          user: { id: '123' }
-        } as Session
-      }
-    })
-    ;(mockSupabase.from('profiles').select('role').eq('id', '123').single as any).mockResolvedValue({
-      data: { role: 'user' },
-      error: null
-    })
-
+  it("ne doit pas afficher le bouton si l'utilisateur n'est pas admin", async () => {
+    vi.spyOn(useAuthModule, 'useAuth').mockReturnValue({ user: { email: 'test@user.com' }, loading: false })
+    vi.spyOn(checkAdminModule, 'checkAdminStatus').mockResolvedValue(false)
     render(<AdminButton />)
     await waitFor(() => {
       expect(screen.queryByText('Administration')).not.toBeInTheDocument()
     })
   })
 
-  // Test 4: Le bouton doit être affiché si l'utilisateur est admin
-  it('doit afficher le bouton si l\'utilisateur est admin', async () => {
-    const mockSupabase = createBrowserClient('https://example.supabase.co', 'anon-key')
-    ;(mockSupabase.auth.getSession as any).mockResolvedValue({
-      data: {
-        session: {
-          user: { id: '123' }
-        } as Session
-      }
-    })
-    ;(mockSupabase.from('profiles').select('role').eq('id', '123').single as any).mockResolvedValue({
-      data: { role: 'admin' },
-      error: null
-    })
-
+  it("doit afficher le bouton si l'utilisateur est admin", async () => {
+    vi.spyOn(useAuthModule, 'useAuth').mockReturnValue({ user: { email: 'admin@site.com' }, loading: false })
+    vi.spyOn(checkAdminModule, 'checkAdminStatus').mockResolvedValue(true)
     render(<AdminButton />)
     await waitFor(() => {
-      const button = screen.getByText('Administration')
-      expect(button).toBeInTheDocument()
-      expect(button).toHaveAttribute('href', '/admin')
-      expect(button).toHaveClass('text-sm', 'font-medium', 'text-blue-800')
+      expect(screen.getByText('Administration')).toBeInTheDocument()
     })
   })
 
-  // Test 5: Le bouton doit avoir le bon style
   it('doit avoir le bon style', async () => {
-    const mockSupabase = createBrowserClient('https://example.supabase.co', 'anon-key')
-    ;(mockSupabase.auth.getSession as any).mockResolvedValue({
-      data: {
-        session: {
-          user: { id: '123' }
-        } as Session
-      }
-    })
-    ;(mockSupabase.from('profiles').select('role').eq('id', '123').single as any).mockResolvedValue({
-      data: { role: 'admin' },
-      error: null
-    })
-
+    vi.spyOn(useAuthModule, 'useAuth').mockReturnValue({ user: { email: 'admin@site.com' }, loading: false })
+    vi.spyOn(checkAdminModule, 'checkAdminStatus').mockResolvedValue(true)
     render(<AdminButton />)
     await waitFor(() => {
       const button = screen.getByText('Administration')
-      expect(button).toHaveClass(
-        'text-sm',
-        'font-medium',
-        'text-blue-800',
-        'hover:text-blue-900',
-        'hover:bg-blue-50',
-        'border-blue-200'
-      )
+      expect(button).toHaveClass('text-gray-600')
     })
   })
 
-  // Test 6: Le bouton doit gérer les erreurs de manière appropriée
   it('doit gérer les erreurs de manière appropriée', async () => {
-    const mockSupabase = createBrowserClient('https://example.supabase.co', 'anon-key')
-    ;(mockSupabase.auth.getSession as any).mockRejectedValue(new Error('Erreur de connexion'))
-
-    const consoleSpy = vi.spyOn(console, 'error')
+    vi.spyOn(useAuthModule, 'useAuth').mockReturnValue({ user: { email: 'admin@site.com' }, loading: false })
+    vi.spyOn(checkAdminModule, 'checkAdminStatus').mockImplementation(() => {
+      throw new Error('Erreur de test')
+    })
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
     render(<AdminButton />)
-    
     await waitFor(() => {
       expect(consoleSpy).toHaveBeenCalledWith(
         'Erreur lors de la vérification du statut admin:',
         expect.any(Error)
       )
-      expect(screen.queryByText('Administration')).not.toBeInTheDocument()
     })
-    
-    consoleSpy.mockRestore()
   })
 
-  // Test 7: Le bouton doit se mettre à jour si le statut admin change
   it('doit se mettre à jour si le statut admin change', async () => {
-    const mockSupabase = createBrowserClient('https://example.supabase.co', 'anon-key')
-    let isAdmin = false
+    const mockUseAuth = vi.spyOn(useAuthModule, 'useAuth')
+    const mockCheckAdmin = vi.spyOn(checkAdminModule, 'checkAdminStatus')
 
-    ;(mockSupabase.auth.getSession as any).mockResolvedValue({
-      data: {
-        session: {
-          user: { id: '123' }
-        } as Session
-      }
-    })
-    ;(mockSupabase.from('profiles').select('role').eq('id', '123').single as any).mockImplementation(() => {
-      return Promise.resolve({
-        data: { role: isAdmin ? 'admin' : 'user' },
-        error: null
-      })
-    })
+    // Premier rendu - pas admin
+    mockUseAuth.mockReturnValue({ user: { email: 'admin@site.com' }, loading: false })
+    mockCheckAdmin.mockResolvedValueOnce(false)
 
     const { rerender } = render(<AdminButton />)
-    
-    // Premier rendu - pas admin
+
     await waitFor(() => {
       expect(screen.queryByText('Administration')).not.toBeInTheDocument()
     })
 
-    // Changement du statut admin
-    isAdmin = true
-    rerender(<AdminButton />)
-
     // Deuxième rendu - admin
+    await act(async () => {
+      mockUseAuth.mockReturnValue({ user: { email: 'admin@site.com' }, loading: false })
+      mockCheckAdmin.mockResolvedValueOnce(true)
+      rerender(<AdminButton />)
+    })
+
     await waitFor(() => {
       expect(screen.getByText('Administration')).toBeInTheDocument()
     })

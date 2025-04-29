@@ -11,6 +11,7 @@ AgorIA est une plateforme d'analyse politique qui permet de comparer les positio
 - 🎯 Thèmes variés (Écologie, Économie, Éducation, etc.)
 - 🔒 Système de rôles (Admin/User)
 - 📱 Interface responsive
+- 🧠 Recherche vectorielle avancée avec Pinecone
 
 ## Architecture Technique
 
@@ -22,6 +23,17 @@ AgorIA est une plateforme d'analyse politique qui permet de comparer les positio
 - **Authentification**: Supabase Auth
 - **Validation**: Zod
 - **Tests**: Jest, Vitest, Testing Library
+- **Recherche Vectorielle**: Pinecone
+
+### Fonctionnalités Avancées
+
+#### Recherche Vectorielle avec Pinecone
+
+La plateforme intègre une recherche vectorielle puissante basée sur Pinecone, permettant :
+- Indexation sémantique des positions politiques
+- Recherche contextuelle et sémantique
+- Amélioration de la pertinence des résultats
+- Optimisation des performances de recherche
 
 ### Sécurité
 

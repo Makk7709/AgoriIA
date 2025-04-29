@@ -1,18 +1,39 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { useAuth } from '@/hooks/useAuth'
+import { checkAdminStatus } from '@/lib/checkAdmin'
 
 export function AdminButton() {
   const [isOpen, setIsOpen] = useState(false)
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false)
   const router = useRouter()
+  const { user, loading } = useAuth()
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      if (!user) return
+      try {
+        const admin = await checkAdminStatus(user.email)
+        setIsAdmin(admin)
+      } catch (error) {
+        console.error('Erreur lors de la vérification du statut admin:', error)
+      }
+    }
+    checkAdmin()
+  }, [user])
+
+  useEffect(() => { setMounted(true); }, []);
+  if (!mounted) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -33,6 +54,9 @@ export function AdminButton() {
       setIsLoading(false)
     }
   }
+
+  if (loading) return null
+  if (!user || !isAdmin) return null
 
   return (
     <>

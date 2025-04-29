@@ -4,13 +4,15 @@ import { Metadata } from 'next'
 import { StructuredData } from '@/components/StructuredData'
 import { ComparisonView } from '@/components/ComparisonView'
 import type { Theme, Position, Candidate } from '@/lib/types'
+import { getThemesAndCandidates } from '@/lib/supabase/getThemesAndCandidates'
+import { sanitizePositionContent, logContentDebug } from '@/lib/utils'
 
 type Props = {
   params: { [key: string]: string | string[] | undefined }
   searchParams: { [key: string]: string | string[] | undefined }
 }
 
-async function getThemesAndCandidates() {
+async function fetchThemesAndCandidates() {
   console.log('Fetching themes and candidates...');
   
   // Créer un client Supabase avec le rôle de service
@@ -62,10 +64,14 @@ async function getPositions(themeId: string, candidateIds: string[]) {
         id,
         name,
         party
+      ),
+      candidate_positions!inner (
+        position
       )
     `)
     .eq('theme_id', themeId)
-    .in('candidate_id', candidateIds);
+    .in('candidate_id', candidateIds)
+    .order('created_at', { ascending: false });
 
   console.log('Raw response:', { data, error });
 
@@ -79,11 +85,29 @@ async function getPositions(themeId: string, candidateIds: string[]) {
     return [];
   }
 
-  // Transform the data to match the Position type
-  const transformedData = data.map(position => ({
-    ...position,
-    candidate: position.candidate[0] // Take the first candidate from the array
-  }));
+  // Vérifier que chaque position a un candidat valide
+  const validPositions = data.filter(position => {
+    if (!position.candidate || !position.candidate[0]) {
+      console.warn(`Position ${position.id} has no valid candidate`);
+      return false;
+    }
+    return true;
+  });
+
+  // Transformer les données pour correspondre au type Position
+  const transformedData = validPositions.map(position => {
+    const cleanContent = sanitizePositionContent(position.content);
+    logContentDebug(cleanContent, `getPositions-${position.id}`);
+
+    return {
+      ...position,
+      content: cleanContent,
+      candidate: {
+        ...position.candidate[0],
+        position: position.candidate_positions[0]?.position || 'agree'
+      }
+    };
+  });
 
   console.log('Transformed positions:', transformedData);
   return transformedData as Position[];
@@ -111,7 +135,7 @@ export default async function ComparePage({ searchParams }: Props) {
   const theme = params.theme as string | undefined
   const candidates = params.candidates
 
-  const { themes, candidates: allCandidates } = await getThemesAndCandidates()
+  const { themes, candidates: allCandidates } = await fetchThemesAndCandidates()
   
   let positions: Position[] = []
   let selectedTheme: Theme | undefined
