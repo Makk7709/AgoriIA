@@ -15,10 +15,27 @@ export function calculateAlignmentScores(
   userResponses: UserResponses
 ): AlignmentScore[] {
   try {
-    // Vérifier les entrées
-    if (!selectedPositions?.length || !allPositions?.length || !userResponses) {
-      console.warn("Données manquantes pour le calcul des scores")
+    // Vérifier les entrées avec des logs détaillés
+    if (!selectedPositions?.length) {
+      console.warn("Aucune position sélectionnée pour le calcul des scores")
       return []
+    }
+    if (!allPositions?.length) {
+      console.warn("Aucune position disponible pour la comparaison")
+      return []
+    }
+    if (!userResponses || Object.keys(userResponses).length === 0) {
+      console.warn("Aucune réponse utilisateur disponible")
+      return []
+    }
+
+    // Log des données d'entrée pour le debugging
+    if (process.env.NODE_ENV === 'development') {
+      console.log('📊 Données d\'entrée pour le calcul des scores:', {
+        selectedPositionsCount: selectedPositions.length,
+        allPositionsCount: allPositions.length,
+        userResponsesCount: Object.keys(userResponses).length
+      })
     }
 
     // Regrouper les positions par candidat
@@ -75,7 +92,9 @@ export function calculateAlignmentScores(
         console.log('🧮 Score calculé pour', candidatePositions[0].candidate.name, ':', {
           totalScore,
           answeredPositions,
-          alignmentPercentage
+          alignmentPercentage,
+          candidateId: candidatePositions[0].candidate.id,
+          positionsCount: candidatePositions.length
         })
       }
 
@@ -91,6 +110,14 @@ export function calculateAlignmentScores(
     return scores
   } catch (error) {
     console.error("Erreur lors du calcul des scores:", error)
+    // Ajout d'informations de contexte à l'erreur
+    if (error instanceof Error) {
+      console.error("Contexte de l'erreur:", {
+        selectedPositionsCount: selectedPositions?.length,
+        allPositionsCount: allPositions?.length,
+        userResponsesCount: userResponses ? Object.keys(userResponses).length : 0
+      })
+    }
     return []
   }
 }

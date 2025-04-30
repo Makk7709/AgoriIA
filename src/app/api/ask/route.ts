@@ -48,32 +48,35 @@ export async function POST(req: Request) {
       })
     }
 
-    // Générer l'embedding de la question
-    const embeddingStart = Date.now()
-    const embeddingResponse = await openai.embeddings.create({
-      model: "text-embedding-ada-002",
-      input: question
-    })
-    const queryVector = embeddingResponse.data[0].embedding
-    console.log('Temps de génération embedding:', Date.now() - embeddingStart, 'ms')
+    // Générer l'embedding de la question et préparer la requête Pinecone en parallèle
+    const [embeddingResponse, index] = await Promise.all([
+      openai.embeddings.create({
+        model: "text-embedding-ada-002",
+        input: question
+      }),
+      pinecone.Index(process.env.PINECONE_INDEX_NAME!)
+    ])
 
-    // Interroger Pinecone
+    const queryVector = embeddingResponse.data[0].embedding
+    console.log('Temps de génération embedding:', Date.now() - startTime, 'ms')
+
+    // Interroger Pinecone avec moins de résultats
     const pineconeStart = Date.now()
-    const index = pinecone.Index(process.env.PINECONE_INDEX_NAME!)
     const pineconeResponse = await index.query({
       vector: queryVector,
-      topK: 5,
+      topK: 3, // Réduit de 5 à 3 pour plus de rapidité
       includeMetadata: true
     })
     console.log('Temps de requête Pinecone:', Date.now() - pineconeStart, 'ms')
 
-    // Construire le contexte
+    // Construire le contexte de manière plus concise
     const context = pineconeResponse.matches
       .map((m) => m.metadata?.summary || m.metadata?.position || "")
+      .filter(Boolean)
       .join("\n---\n")
     console.log("📚 Contexte vectoriel utilisé :", context)
 
-    // Générer la réponse avec OpenAI
+    // Générer la réponse avec OpenAI avec des paramètres optimisés
     const openaiStart = Date.now()
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
@@ -81,8 +84,10 @@ export async function POST(req: Request) {
         { role: "system", content: SYSTEM_PROMPT },
         { role: "user", content: `Question: "${question}"\n\nContexte:\n${context}` }
       ],
-      temperature: 0.7,
-      max_tokens: 1000
+      temperature: 0.5, // Réduit pour des réponses plus cohérentes
+      max_tokens: 800, // Réduit pour des réponses plus concises
+      presence_penalty: 0.1, // Ajouté pour éviter la répétition
+      frequency_penalty: 0.1 // Ajouté pour encourager la diversité
     })
     console.log('Temps de génération OpenAI:', Date.now() - openaiStart, 'ms')
 
@@ -92,8 +97,8 @@ export async function POST(req: Request) {
       throw new Error('Pas de réponse générée')
     }
 
-    // Mettre en cache la réponse
-    await setCachedResponse(cacheKey, response)
+    // Mettre en cache la réponse de manière asynchrone
+    setCachedResponse(cacheKey, response).catch(console.error)
 
     console.log('Temps total de traitement:', Date.now() - startTime, 'ms')
 

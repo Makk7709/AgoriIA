@@ -63,17 +63,21 @@ async function getPositions(themeId: string, candidateIds: string[]) {
       candidate:candidates (
         id,
         name,
-        party
+        party,
+        created_at
       ),
-      candidate_positions!inner (
-        position
+      candidate_positions (
+        position,
+        explanation
       )
     `)
     .eq('theme_id', themeId)
     .in('candidate_id', candidateIds)
     .order('created_at', { ascending: false });
 
-  console.log('Raw response:', { data, error });
+  console.log('SQL Query:', (data as any)?._query);
+  console.log('Raw response data:', data);
+  console.log('Error if any:', error);
 
   if (error) {
     console.error('Error fetching positions:', error);
@@ -81,36 +85,52 @@ async function getPositions(themeId: string, candidateIds: string[]) {
   }
 
   if (!data || data.length === 0) {
-    console.log('No positions found for the given theme and candidates');
+    console.log('No positions found for theme:', themeId, 'and candidates:', candidateIds);
+    // Vérifier si les IDs existent dans la base de données
+    const { data: themeCheck } = await supabase
+      .from('themes')
+      .select('id')
+      .eq('id', themeId)
+      .single();
+    
+    const { data: candidateCheck } = await supabase
+      .from('candidates')
+      .select('id')
+      .in('id', candidateIds);
+
+    console.log('Theme exists:', !!themeCheck);
+    console.log('Found candidates:', candidateCheck?.length);
     return [];
   }
 
-  // Vérifier que chaque position a un candidat valide
-  const validPositions = data.filter(position => {
-    if (!position.candidate || !position.candidate[0]) {
-      console.warn(`Position ${position.id} has no valid candidate`);
-      return false;
-    }
-    return true;
-  });
+  // Transformer les données pour correspondre à l'interface Position
+  const transformedPositions = data
+    .filter(position => !!position.candidate)
+    .map(position => {
+      const candidate = Array.isArray(position.candidate)
+        ? position.candidate[0]
+        : position.candidate;
+      const candidatePosition = position.candidate_positions && position.candidate_positions[0];
 
-  // Transformer les données pour correspondre au type Position
-  const transformedData = validPositions.map(position => {
-    const cleanContent = sanitizePositionContent(position.content);
-    logContentDebug(cleanContent, `getPositions-${position.id}`);
+      return {
+        ...position,
+        candidate: {
+          id: candidate.id,
+          name: candidate.name,
+          party: candidate.party,
+          created_at: candidate.created_at
+        },
+        candidate_positions: candidatePosition
+          ? {
+              position: candidatePosition.position as 'agree' | 'disagree' | 'neutral',
+              explanation: candidatePosition.explanation
+            }
+          : undefined
+      };
+    });
 
-    return {
-      ...position,
-      content: cleanContent,
-      candidate: {
-        ...position.candidate[0],
-        position: position.candidate_positions[0]?.position || 'agree'
-      }
-    };
-  });
-
-  console.log('Transformed positions:', transformedData);
-  return transformedData as Position[];
+  console.log('Transformed positions:', transformedPositions);
+  return transformedPositions;
 }
 
 export const metadata: Metadata = {
@@ -133,15 +153,16 @@ export const metadata: Metadata = {
 export default async function ComparePage({ searchParams }: Props) {
   const params = await Promise.resolve(searchParams)
   const theme = params.theme as string | undefined
-  const candidates = params.candidates
+  const candidate1 = params.candidate1 as string | undefined
+  const candidate2 = params.candidate2 as string | undefined
 
   const { themes, candidates: allCandidates } = await fetchThemesAndCandidates()
   
   let positions: Position[] = []
   let selectedTheme: Theme | undefined
 
-  if (theme && candidates) {
-    const selectedCandidates = Array.isArray(candidates) ? candidates : [candidates]
+  if (theme && candidate1 && candidate2) {
+    const selectedCandidates = [candidate1, candidate2]
     console.log('Selected candidates:', selectedCandidates)
     
     positions = await getPositions(theme, selectedCandidates)
@@ -223,8 +244,9 @@ export default async function ComparePage({ searchParams }: Props) {
                   <div className="relative">
                     <select
                       id="candidate1"
-                      name="candidates"
+                      name="candidate1"
                       className="block w-full px-6 py-4 text-lg font-serif border-2 border-[#002654]/20 focus:outline-none focus:ring-2 focus:ring-[#002654] focus:border-[#002654] rounded-2xl bg-white/90 text-[#002654] appearance-none transition-all hover:border-[#002654]/40"
+                      defaultValue={candidate1 || ''}
                       required
                     >
                       <option value="">Choisissez un candidat</option>
@@ -253,8 +275,9 @@ export default async function ComparePage({ searchParams }: Props) {
                   <div className="relative">
                     <select
                       id="candidate2"
-                      name="candidates"
+                      name="candidate2"
                       className="block w-full px-6 py-4 text-lg font-serif border-2 border-[#002654]/20 focus:outline-none focus:ring-2 focus:ring-[#002654] focus:border-[#002654] rounded-2xl bg-white/90 text-[#002654] appearance-none transition-all hover:border-[#002654]/40"
+                      defaultValue={candidate2 || ''}
                       required
                     >
                       <option value="">Choisissez un candidat</option>

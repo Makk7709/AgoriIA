@@ -21,21 +21,35 @@ export function Scoreboard({ positions, selectedPositions, userResponses }: Scor
   const [showConfirmation, setShowConfirmation] = useState(false)
   const [answeredPositions, setAnsweredPositions] = useState<AnsweredPosition[]>([])
 
-  // Nettoyer les scores et réponses lors du démontage
+  // Nettoyer les scores et réponses lors du démontage ou changement de props
   useEffect(() => {
-    return () => {
-      setScores([])
-      setAnsweredPositions([])
-      setShowConfirmation(false)
-    }
-  }, [])
+    setScores([])
+    setAnsweredPositions([])
+    setShowConfirmation(false)
+    setError(null)
+    setLoading(true)
+  }, [positions, selectedPositions])
 
   useEffect(() => {
-    // Créer le tableau d'AnsweredPositions
-    const newAnsweredPositions = selectedPositions.map(position => ({
-      position,
-      userResponse: userResponses[position.id] || 'neutral'
-    }))
+    // Validation des données d'entrée
+    if (!selectedPositions?.length || !positions?.length) {
+      setError("Données insuffisantes pour calculer les scores")
+      setLoading(false)
+      return
+    }
+
+    // Créer le tableau d'AnsweredPositions avec validation
+    const newAnsweredPositions = selectedPositions
+      .filter(position => position.id && userResponses[position.id])
+      .map(position => ({
+        position,
+        userResponse: userResponses[position.id]
+      }))
+
+    if (newAnsweredPositions.length !== selectedPositions.length) {
+      console.warn("Certaines positions n'ont pas de réponse utilisateur")
+    }
+
     setAnsweredPositions(newAnsweredPositions)
     
     // Log pour le debugging
@@ -43,7 +57,8 @@ export function Scoreboard({ positions, selectedPositions, userResponses }: Scor
       console.log('🧠 Réponses mises à jour:', {
         selectedPositions: selectedPositions.map(p => p.id),
         userResponses,
-        answeredPositions: newAnsweredPositions
+        answeredPositions: newAnsweredPositions,
+        missingResponses: selectedPositions.length - newAnsweredPositions.length
       })
     }
   }, [selectedPositions, userResponses])
@@ -53,13 +68,23 @@ export function Scoreboard({ positions, selectedPositions, userResponses }: Scor
       setLoading(true)
       setError(null)
       try {
+        // Validation préalable
+        if (!selectedPositions?.length || !positions?.length || !userResponses) {
+          throw new Error("Données manquantes pour le calcul des scores")
+        }
+
         const calculatedScores = calculateAlignmentScores(selectedPositions, positions, userResponses)
+        
+        if (!calculatedScores.length) {
+          throw new Error("Aucun score n'a pu être calculé")
+        }
+
         setScores(calculatedScores)
         setShowConfirmation(true)
         setTimeout(() => setShowConfirmation(false), 3000)
       } catch (error) {
         console.error("Erreur lors du calcul des scores:", error)
-        setError("Une erreur est survenue lors de l'analyse. Veuillez réessayer plus tard.")
+        setError(error instanceof Error ? error.message : "Une erreur est survenue lors de l'analyse. Veuillez réessayer plus tard.")
       } finally {
         setLoading(false)
       }

@@ -100,9 +100,9 @@ export async function POST(request: NextRequest) {
 
     // 4. Enregistrer les positions
     const positionsToInsert = validatedPositions.map(pos => ({
-      theme_id: normalizeThemeId(pos.theme),
+      theme_id: pos.theme ? normalizeThemeId(pos.theme) : 'non-classe',
       candidate_id: candidateId,
-      content: pos.summary,
+      content: pos.summary || pos.content,
       source_url: pos.source,
       created_at: new Date().toISOString()
     }));

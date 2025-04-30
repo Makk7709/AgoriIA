@@ -15,6 +15,9 @@ export interface Position {
     id: string;
     name: string;
   };
+  theme?: string;
+  summary?: string;
+  source?: string;
 }
 
 export interface Theme {

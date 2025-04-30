@@ -1,0 +1,140 @@
+# Audit du Système de Comparaison AgorIA
+Date: 2024-03-21
+
+## Points de Contrôle
+
+### 1. Calcul des Scores (scoring.ts)
+- Validation des entrées
+  - Vérification des positions sélectionnées
+  - Vérification des positions disponibles
+  - Vérification des réponses utilisateur
+- Logs de debugging
+  - Nombre de positions sélectionnées
+  - Nombre de positions disponibles
+  - Nombre de réponses utilisateur
+  - Scores calculés par candidat
+
+### 2. Gestion des États (Scoreboard)
+- Réinitialisation des états
+  - Changement de positions
+  - Changement de réponses
+- Validation des données
+  - Positions sélectionnées
+  - Réponses utilisateur
+  - Calcul des scores
+
+### 3. Validation des Réponses (ResponseForm)
+- Validation des réponses
+  - Vérification de la présence d'une réponse
+  - Affichage des erreurs
+- Logs de debugging
+  - Réponses enregistrées
+  - Total des réponses
+  - Réponses attendues
+
+## Format des Logs
+
+### Logs de Calcul des Scores
+📊 Données d'entrée:
+- selectedPositionsCount: number
+- allPositionsCount: number
+- userResponsesCount: number
+
+🧮 Score calculé:
+- candidateName: string
+- totalScore: number
+- answeredPositions: number
+- alignmentPercentage: number
+- candidateId: string
+- positionsCount: number
+
+### Logs de Réponses
+📝 Réponse enregistrée:
+- positionId: string
+- value: string
+- totalResponses: number
+- expectedResponses: number
+
+## Instructions de Debugging
+
+1. Vérifier les logs dans la console du navigateur
+2. Surveiller les messages d'erreur
+3. Vérifier les données d'entrée
+4. Contrôler les calculs de scores
+5. Valider les réponses utilisateur
+
+## Points d'Attention
+
+1. Données manquantes
+2. Erreurs de calcul
+3. Réponses invalides
+4. États incohérents
+5. Problèmes d'affichage
+
+## Problèmes Identifiés
+
+1. Structure de la Base de Données
+- La table candidate_positions manquait dans le schéma initial
+- Les relations entre positions et candidats n'étaient pas correctement définies
+- Les contraintes de clés étrangères n'étaient pas complètes
+
+2. Récupération des Données
+- La fonction getPositions utilisait une jointure incorrecte avec candidate_positions
+- Les données transformées ne correspondaient pas à l'interface Position
+- Manque de validation des données récupérées
+
+3. Types TypeScript
+- Les interfaces ne reflétaient pas la structure réelle de la base de données
+- Certains champs optionnels étaient marqués comme requis et vice versa
+- Manque de types pour les nouvelles fonctionnalités (AIAnalysis)
+
+## Solutions Implémentées
+
+1. Migration de la Base de Données
+- Ajout de la table candidate_positions
+- Mise à jour des relations et contraintes
+- Ajout des index nécessaires
+
+2. Correction du Code
+- Mise à jour de la fonction getPositions
+- Correction des types TypeScript
+- Ajout de logs de debug
+
+3. Scripts de Migration
+- Création d'un script pour migrer les données existantes
+- Validation des données avant migration
+- Gestion des erreurs
+
+## Tests à Effectuer
+
+1. Base de Données
+- Vérifier que toutes les tables sont créées correctement
+- Valider les relations entre les tables
+- Tester les contraintes d'intégrité
+
+2. Récupération des Données
+- Tester getPositions avec différents thèmes et candidats
+- Vérifier la transformation des données
+- Valider les logs de debug
+
+3. Interface Utilisateur
+- Tester l'affichage des positions
+- Vérifier le calcul des scores
+- Valider l'analyse AI
+
+## Prochaines Étapes
+
+1. Déploiement
+- Appliquer les migrations de base de données
+- Exécuter le script de migration des données
+- Mettre à jour le code en production
+
+2. Monitoring
+- Mettre en place des logs détaillés
+- Surveiller les erreurs potentielles
+- Suivre les performances
+
+3. Améliorations Futures
+- Optimiser les requêtes de base de données
+- Améliorer la gestion des erreurs
+- Ajouter des tests automatisés 

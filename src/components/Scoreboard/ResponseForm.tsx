@@ -20,14 +20,39 @@ interface ResponseFormProps {
 export function ResponseForm({ selectedPositions, onResponsesChange }: ResponseFormProps) {
   const [responses, setResponses] = useState<UserResponses>({})
   const [showConfirmation, setShowConfirmation] = useState(false)
+  const [validationErrors, setValidationErrors] = useState<{[key: string]: string}>({})
 
   // Réinitialiser les réponses lorsque les positions sélectionnées changent
   useEffect(() => {
     setResponses({})
+    setValidationErrors({})
     onResponsesChange({})
   }, [selectedPositions, onResponsesChange])
 
+  const validateResponse = (positionId: string, value: Response): boolean => {
+    const errors: {[key: string]: string} = {}
+    
+    if (!value) {
+      errors[positionId] = "Veuillez sélectionner une réponse"
+      setValidationErrors(errors)
+      return false
+    }
+
+    // Nettoyer l'erreur si la validation passe
+    setValidationErrors(prev => {
+      const newErrors = { ...prev }
+      delete newErrors[positionId]
+      return newErrors
+    })
+    
+    return true
+  }
+
   const handleResponseChange = (positionId: string, value: Response) => {
+    if (!validateResponse(positionId, value)) {
+      return
+    }
+
     const newResponses = {
       ...responses,
       [positionId]: value,
@@ -38,6 +63,16 @@ export function ResponseForm({ selectedPositions, onResponsesChange }: ResponseF
     // Afficher la confirmation
     setShowConfirmation(true)
     setTimeout(() => setShowConfirmation(false), 3000)
+
+    // Log pour le debugging
+    if (process.env.NODE_ENV === 'development') {
+      console.log('📝 Réponse enregistrée:', {
+        positionId,
+        value,
+        totalResponses: Object.keys(newResponses).length,
+        expectedResponses: selectedPositions.length
+      })
+    }
   }
 
   const allQuestionsAnswered = selectedPositions.every(
@@ -83,6 +118,11 @@ export function ResponseForm({ selectedPositions, onResponsesChange }: ResponseF
                 <Label htmlFor={`neutral-${position.id}`}>⚪ Neutre</Label>
               </div>
             </RadioGroup>
+            {validationErrors[position.id] && (
+              <p className="mt-2 text-sm text-red-600">
+                {validationErrors[position.id]}
+              </p>
+            )}
           </CardContent>
         </Card>
       ))}

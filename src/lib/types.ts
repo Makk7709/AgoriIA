@@ -3,15 +3,14 @@ export interface Position {
   theme_id: string
   candidate_id: string
   content: string
-  source_url?: string | null
+  source_url: string | null
+  title: string | null
+  description: string | null
   created_at: string
-  title?: string | null
-  description?: string | null
-  candidate: {
-    id: string
-    name: string
-    party: string
-    position?: 'agree' | 'disagree' | 'neutral'
+  candidate: Candidate
+  candidate_positions?: {
+    position: 'agree' | 'disagree' | 'neutral'
+    explanation: string | null
   }
 }
 
@@ -33,8 +32,7 @@ export interface Theme {
 export interface Candidate {
   id: string
   name: string
-  party: string
-  bio?: string | null
+  party: string | null
   created_at: string
 }
 
@@ -47,7 +45,18 @@ export interface CandidatePosition {
   created_at: string
 }
 
+export interface UserResponses {
+  [positionId: string]: 'agree' | 'disagree' | 'neutral'
+}
+
 export interface AnsweredPosition {
-  position: Position;
-  userResponse: 'agree' | 'disagree' | 'neutral';
+  position: Position
+  userResponse: 'agree' | 'disagree' | 'neutral'
+}
+
+export interface AIAnalysis {
+  closestCandidate: string
+  agreementAreas: string[]
+  disagreementAreas: string[]
+  explorationAdvice: string
 } 
