@@ -1,4 +1,4 @@
-#AgorIA - Plateforme d'Information Politique
+## AgorIA - Plateforme d'Information Politique
 
 ## À propos
 
