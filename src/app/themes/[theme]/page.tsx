@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { getThemeWithPositions } from '@/lib/supabase/getThemeWithPositions'
 import { ThemeContent } from '@/components/themes/ThemeContent'
 import { notFound } from 'next/navigation'
+import { Suspense } from 'react'
 
 interface ThemePageProps {
   params: {
@@ -15,15 +16,25 @@ export async function generateMetadata({ params }: ThemePageProps): Promise<Meta
 
   if (!data) {
     return {
-      title: 'Thème non trouvé',
-      description: 'Le thème demandé n\'existe pas.'
+      title: 'Thème non trouvé - Korev AI',
+      description: 'Le thème que vous recherchez n\'existe pas.',
     }
   }
 
   return {
-    title: data.theme.name,
-    description: data.theme.description || `Positions politiques sur le thème ${data.theme.name}`
+    title: `${data.theme.name} - Korev AI`,
+    description: data.theme.description || `Découvrez les positions des candidats sur ${data.theme.name}`,
   }
+}
+
+async function ThemePageContent({ themeId }: { themeId: string }) {
+  const data = await getThemeWithPositions(themeId)
+
+  if (!data) {
+    notFound()
+  }
+
+  return <ThemeContent theme={data.theme} positions={data.positions} />
 }
 
 export default async function ThemePage({ params }: ThemePageProps) {
@@ -34,11 +45,9 @@ export default async function ThemePage({ params }: ThemePageProps) {
     notFound()
   }
 
-  const data = await getThemeWithPositions(themeId)
-
-  if (!data) {
-    notFound()
-  }
-
-  return <ThemeContent theme={data.theme} positions={data.positions} />
+  return (
+    <Suspense fallback={<div>Chargement du thème...</div>}>
+      <ThemePageContent themeId={themeId} />
+    </Suspense>
+  )
 } 

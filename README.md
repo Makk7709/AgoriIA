@@ -1,135 +1,73 @@
-# AgorIA - Plateforme d'Analyse Politique
+# Korev AI - Plateforme d'Information Politique
 
-## Description
+## À propos
 
-AgorIA est une plateforme d'analyse politique qui permet de comparer les positions des candidats sur différents thèmes. La plateforme utilise l'intelligence artificielle pour analyser et présenter les informations de manière claire et accessible.
+Korev AI est une plateforme innovante conçue pour éclairer les citoyens sur les positions politiques des candidats aux élections françaises. Notre mission est de fournir une information claire, objective et accessible, permettant aux électeurs de prendre des décisions éclairées.
 
-## Version MVP 1.1
+## Objectif
 
-La version MVP 1.1 apporte les améliorations suivantes :
+Notre objectif est simple : informer, pas convaincre. Nous croyons en la force d'une démocratie éclairée où chaque citoyen peut accéder facilement aux positions des candidats sur les sujets qui lui importent.
 
-- 🚀 Interface utilisateur optimisée et responsive
-- 🔍 Système de recherche vectorielle amélioré
-- 🎯 Suggestions de questions contextuelles
-- 🔒 Système d'authentification robuste
-- 📱 Support PWA (Progressive Web App)
-- 🧪 Tests unitaires et d'intégration
-- 🛠️ Optimisation des performances
+## Fonctionnalités
 
-## Fonctionnalités Principales
+- **Exploration par Thèmes** : Accédez aux positions des candidats organisées par thèmes politiques majeurs :
+  - Écologie
+  - Économie
+  - Éducation
+  - Emploi
+  - Europe
+  - Institutions
+  - Santé
+  - Sécurité
+  - Social
 
-- 🔍 Analyse des positions politiques
-- 📊 Comparaison des candidats
-- 🎯 Thèmes variés (Écologie, Économie, Éducation, etc.)
-- 🔒 Système de rôles (Admin/User)
-- 📱 Interface responsive
-- 🧠 Recherche vectorielle avancée avec Pinecone
+- **Comparaison Transparente** : Comparez facilement les positions des différents candidats sur chaque thème.
 
-## Architecture Technique
+- **Sources Vérifiées** : Chaque position est accompagnée de sa source, permettant aux utilisateurs de vérifier l'information.
 
-### Stack Technologique
+- **Interface Intuitive** : Une expérience utilisateur fluide et accessible, conçue pour faciliter la navigation et la compréhension.
 
-- **Frontend**: Next.js 14, React 18, TailwindCSS
-- **Backend**: API Routes Next.js
-- **Base de données**: Supabase (PostgreSQL)
-- **Authentification**: Supabase Auth
-- **Validation**: Zod
-- **Tests**: Vitest, Testing Library
-- **Recherche Vectorielle**: Pinecone
-- **PWA**: Service Workers, Manifest
+## Statut du Projet
 
-### Fonctionnalités Avancées
+⚠️ **Version Bêta** : Korev AI est actuellement en phase de test. Bien que nous nous efforcions de fournir des informations précises, certaines erreurs peuvent survenir. Nous encourageons les utilisateurs à vérifier les informations auprès des sources officielles.
 
-#### Recherche Vectorielle avec Pinecone
+## Indépendance
 
-La plateforme intègre une recherche vectorielle puissante basée sur Pinecone, permettant :
-
-- Indexation sémantique des positions politiques
-- Recherche contextuelle et sémantique
-- Amélioration de la pertinence des résultats
-- Optimisation des performances de recherche
-
-### Sécurité
-
-- RBAC (Role-Based Access Control)
-- Validation des données avec Zod
-- Protection des routes sensibles
-- RLS (Row Level Security) dans Supabase
-
-## Installation
-
-1. Cloner le repository :
-
-```bash
-git clone https://github.com/votre-username/agoria.git
-cd agoria
-```
-
-1. Installer les dépendances :
-
-```bash
-pnpm install
-```
-
-1. Configurer les variables d'environnement :
-
-```bash
-cp .env.example .env.local
-```
-
-1. Lancer le serveur de développement :
-
-```bash
-pnpm dev
-```
-
-## Scripts Disponibles
-
-- `pnpm dev` : Lance le serveur de développement
-- `pnpm build` : Compile le projet
-- `pnpm start` : Lance le serveur de production
-- `pnpm lint` : Vérifie le code avec ESLint
-- `pnpm test` : Lance les tests
-- `pnpm type-check` : Vérifie les types TypeScript
-- `pnpm security:check` : Vérifie les vulnérabilités
-- `pnpm security:fix` : Corrige les vulnérabilités
-- `pnpm lighthouse` : Analyse les performances
-
-## Structure du Projet
-
-```plaintext
-agoria/
-├── src/
-│   ├── app/              # Routes et pages Next.js
-│   ├── components/       # Composants React
-│   ├── lib/             # Utilitaires et configurations
-│   ├── hooks/           # Hooks personnalisés
-│   ├── types/           # Types TypeScript
-│   └── test/            # Tests
-├── public/              # Assets statiques
-├── archives/            # Documentation et rapports
-└── scripts/             # Scripts utilitaires
-```
-
-## Documentation
-
-- [Rapport de Sécurité](archives/security_check_agoria.md)
-- [Rapport UX](archives/ux_check_agoria.md)
-- [Guide d'Installation](docs/installation.md)
-- [Guide de Contribution](docs/contributing.md)
+Korev AI est développée et distribuée par Korev AI. Nous ne sommes affiliés à aucun groupe de pensée ou parti politique. Notre engagement est envers la transparence et l'objectivité de l'information.
 
 ## Contribution
 
-Les contributions sont les bienvenues ! Consultez notre [guide de contribution](docs/contributing.md) pour plus de détails.
+Nous accueillons les retours et suggestions de la communauté pour améliorer continuellement notre plateforme. N'hésitez pas à nous contacter pour signaler des erreurs ou proposer des améliorations.
+
+## Installation
+
+```bash
+# Cloner le repository
+git clone https://github.com/votre-username/korev-ai.git
+
+# Installer les dépendances
+npm install
+
+# Lancer l'application en mode développement
+npm run dev
+```
+
+## Technologies Utilisées
+
+- Next.js
+- React
+- TypeScript
+- Supabase
+- Tailwind CSS
 
 ## Licence
 
-Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
+Ce projet est sous licence [MIT](LICENSE).
 
 ## Contact
 
-Pour toute question ou suggestion, n'hésitez pas à ouvrir une issue sur GitHub.
+Pour toute question ou suggestion, n'hésitez pas à nous contacter à [contact@korev.ai](mailto:contact@korev.ai).
 
-## Équipe
+---
 
-Développé avec ❤️ par l'équipe AgorIA - Version MVP 1.1
+*Korev AI - Informer pour une démocratie éclairée*
