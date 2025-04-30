@@ -1,8 +1,8 @@
-# Korev AI - Plateforme d'Information Politique
+## AgorIA - Plateforme d'Information Politique
 
 ## À propos
 
-Korev AI est une plateforme innovante conçue pour éclairer les citoyens sur les positions politiques des candidats aux élections françaises. Notre mission est de fournir une information claire, objective et accessible, permettant aux électeurs de prendre des décisions éclairées.
+AgorIA est une plateforme innovante conçue pour éclairer les citoyens sur les positions politiques des candidats aux élections françaises. Notre mission est de fournir une information claire, objective et accessible, permettant aux électeurs de prendre des décisions éclairées.
 
 ## Objectif
 
@@ -52,6 +52,7 @@ npm install
 npm run dev
 ```
 
+
 ## Technologies Utilisées
 
 - Next.js
@@ -77,6 +78,7 @@ Nous tenons à remercier :
 
 Pour toute question ou suggestion, n'hésitez pas à nous contacter à [contact@korev.ai](mailto:contact@korev.ai).
 
+## Remerciements particulier a Lena Gaubert pour son idée a la base de ce projet
 ---
 
 *Korev AI - Informer pour une démocratie éclairée*
