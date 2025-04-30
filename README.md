@@ -62,7 +62,16 @@ npm run dev
 
 ## Licence
 
-Ce projet est sous licence [MIT](LICENSE).
+Ce projet est protégé par le droit d'auteur. Tous droits réservés © 2024 Korev AI. 
+Voir le fichier [LICENSE](LICENSE) pour plus de détails.
+
+## Remerciements
+
+Nous tenons à remercier :
+- La communauté open source pour les outils et bibliothèques qui ont rendu ce projet possible
+- Les développeurs et contributeurs qui ont partagé leur expertise
+- Les utilisateurs bêta pour leurs retours précieux
+- Notre équipe pour leur dévouement et leur engagement envers la transparence politique
 
 ## Contact
 
