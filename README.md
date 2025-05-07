@@ -31,7 +31,7 @@ Notre objectif est simple : informer, pas convaincre. Nous croyons en la force d
 
 ## Statut du Projet
 
-⚠️ **Version Bêta** : AgorIA est actuellement en phase de test. Bien que nous nous efforcions de fournir des informations précises, certaines erreurs peuvent survenir. Nous encourageons les utilisateurs à vérifier les informations auprès des sources officielles.
+⚠️ **Version Bêta** : AgorIA est actuellement en phase de test sur les programmes des présidentielles de 2022. Bien que nous nous efforcions de fournir des informations précises, certaines erreurs peuvent survenir. Nous encourageons les utilisateurs à vérifier les informations auprès des sources officielles.
 
 ## Indépendance
 
@@ -150,7 +150,7 @@ Pour contribuer :
 
 ## Licence
 
-Ce projet est protégé par le droit d'auteur. Tous droits réservés © 2024 Korev AI. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
+Ce projet est protégé par le droit d'auteur. Tous droits réservés © 2025 Korev AI. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
 
 ## Contact
 
